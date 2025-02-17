@@ -1,5 +1,105 @@
 """Live QR code detection and decoding"""
 
+
+def create_qr_code(
+    data,
+    *,
+    fill_color='black',
+    back_color='white',
+    box_size=10,
+    border=4,
+    **extra_qrcode_kwargs,
+):
+    """
+    Generate a QR code image for a given string with customizable colors and dimensions.
+
+    Parameters:
+        data (str): The string to encode into the QR code.
+        fill_color (str, optional): Color of the QR code modules. Defaults to 'black'.
+        back_color (str, optional): Color of the background. Defaults to 'white'.
+        box_size (int, optional): Size of each box in pixels. Defaults to 10.
+        border (int, optional): Width of the border (in boxes). Defaults to 4.
+        **extra_qrcode_kwargs: Additional keyword arguments for the qrcode.QRCode constructor.
+
+    Returns:
+        PIL.Image.Image: The generated QR code image.
+    """
+    import qrcode  # pip install qrcode[pil]
+
+    qr = qrcode.QRCode(box_size=box_size, border=border, **extra_qrcode_kwargs)
+    qr.add_data(data)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color=fill_color, back_color=back_color)
+    return img
+
+
+def grid_image(imgs, *, n_rows=None, n_cols=1, v_padding=0, h_padding=0):
+    """
+    Create a grid of images from a list of images.
+
+    Note: Requires PIL
+
+    Args:
+        imgs (list of PIL.Image.Image): List of images to arrange in a grid.
+        n_rows (int, optional): Number of rows in the grid. If None, computed from n_cols and len(imgs).
+        n_cols (int, optional): Number of columns in the grid. Default is 1. If None, computed from n_rows and len(imgs).
+        v_padding (int): Vertical padding between images in pixels. Default is 0.
+        h_padding (int): Horizontal padding between images in pixels. Default is 0.
+
+    Returns:
+        PIL.Image.Image: A new image with all input images arranged in a grid.
+
+    Raises:
+        ValueError: If `imgs` is empty or both `n_rows` and `n_cols` are None.
+
+    Examples:
+
+    >>> from PIL import Image
+    >>> img1 = Image.new('RGB', (100, 100), color='red')
+    >>> img2 = Image.new('RGB', (100, 100), color='blue')
+    >>> img3 = Image.new('RGB', (100, 100), color='green')
+    >>> img4 = Image.new('RGB', (100, 100), color='yellow')
+    >>> imgs = [img1, img2, img3, img4]
+    >>> grid = grid_image(imgs, n_rows=2, n_cols=2, v_padding=10, h_padding=10)
+    >>> grid.size  # Check the size of the resulting grid image
+    (220, 220)
+
+    """
+    from PIL import Image  # pip install pillow
+
+    if not imgs:
+        raise ValueError("The img list is empty.")
+
+    # Determine grid dimensions
+    num_imgs = len(imgs)
+    if n_rows is None and n_cols is None:
+        raise ValueError("At least one of n_rows or n_cols must be specified.")
+
+    if n_rows is None:
+        n_rows = -(-num_imgs // n_cols)  # Ceiling division
+    elif n_cols is None:
+        n_cols = -(-num_imgs // n_rows)  # Ceiling division
+
+    # Get individual image dimensions (assumes all images are the same size)
+    img_width, img_height = imgs[0].size
+
+    # Calculate the size of the grid image
+    grid_width = n_cols * img_width + (n_cols - 1) * h_padding
+    grid_height = n_rows * img_height + (n_rows - 1) * v_padding
+
+    # Create a blank image to hold the grid
+    grid_img = Image.new('RGB', (grid_width, grid_height), color=(255, 255, 255))
+
+    # Paste images onto the grid
+    for idx, img in enumerate(imgs):
+        row, col = divmod(idx, n_cols)
+        x = col * (img_width + h_padding)
+        y = row * (img_height + v_padding)
+        grid_img.paste(img, (x, y))
+
+    return grid_img
+
+
 import cv2
 import numpy as np
 import contextlib
@@ -187,98 +287,182 @@ def compute_display_data_example2(detection_result, frame):
     return display_data
 
 
+import numpy as np
+
+
+def compute_display_data_example3(detection_result, frame):
+    """
+    Example 3: Always display the mean HCL values computed from the entire frame.
+    The values are rendered as a table in the top‐left corner, with fixed-width formatting.
+    """
+    # Convert the entire frame from BGR to LAB.
+    lab_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB).astype(np.float32)
+    # Scale L from [0,255] to [0,100].
+    L_channel = lab_frame[:, :, 0] * (100.0 / 255.0)
+    # a and b channels are offset by 128 in OpenCV's LAB.
+    a_channel = lab_frame[:, :, 1] - 128.0
+    b_channel = lab_frame[:, :, 2] - 128.0
+
+    # Compute hue in degrees and chroma.
+    hue = (np.degrees(np.arctan2(b_channel, a_channel)) + 360) % 360
+    chroma = np.sqrt(a_channel**2 + b_channel**2)
+
+    # Compute mean values.
+    mean_H = np.mean(hue)
+    mean_C = np.mean(chroma)
+    mean_L = np.mean(L_channel)
+
+    # Prepare text overlays in a table-like format.
+    texts = []
+    # Fixed positions for each row (adjust Y positions as needed).
+    texts.append(
+        {
+            'text': f"H: {mean_H:6.2f}",
+            'position': (20, 30),
+            'font': cv2.FONT_HERSHEY_SIMPLEX,
+            'scale': 1.0,
+            'color': (0, 255, 0),
+            'thickness': 2,
+        }
+    )
+    texts.append(
+        {
+            'text': f"C: {mean_C:6.2f}",
+            'position': (20, 60),
+            'font': cv2.FONT_HERSHEY_SIMPLEX,
+            'scale': 1.0,
+            'color': (0, 255, 0),
+            'thickness': 2,
+        }
+    )
+    texts.append(
+        {
+            'text': f"L: {mean_L:6.2f}",
+            'position': (20, 90),
+            'font': cv2.FONT_HERSHEY_SIMPLEX,
+            'scale': 1.0,
+            'color': (0, 255, 0),
+            'thickness': 2,
+        }
+    )
+
+    return {'texts': texts, 'window_name': "HCL Table Display"}
+
+
+def compute_display_data_example4(detection_result, frame):
+    """
+    Example 4: Display the mean HCL values (computed from the QR code region)
+    and the decoded QR text in a table. The overlay is only updated if a QR code
+    is detected (or was recently detected).
+    """
+    display_data = {}
+    if detection_result is not None:
+        # Use the bounding rectangle from the detected QR code.
+        pts = detection_result['points'][0].astype(int)
+        x, y, w, h = cv2.boundingRect(pts.reshape((-1, 1, 2)))
+        roi = frame[y : y + h, x : x + w]
+        if roi.size > 0:
+            lab_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2LAB).astype(np.float32)
+            L_channel = lab_roi[:, :, 0] * (100.0 / 255.0)
+            a_channel = lab_roi[:, :, 1] - 128.0
+            b_channel = lab_roi[:, :, 2] - 128.0
+
+            hue = (np.degrees(np.arctan2(b_channel, a_channel)) + 360) % 360
+            chroma = np.sqrt(a_channel**2 + b_channel**2)
+
+            mean_H = np.mean(hue)
+            mean_C = np.mean(chroma)
+            mean_L = np.mean(L_channel)
+
+            texts = []
+            # Display each value in a fixed row (e.g., rows 1-3) with fixed-width formatting.
+            texts.append(
+                {
+                    'text': f"H: {mean_H:6.2f}",
+                    'position': (20, 30),
+                    'font': cv2.FONT_HERSHEY_SIMPLEX,
+                    'scale': 1.0,
+                    'color': (0, 255, 255),
+                    'thickness': 2,
+                }
+            )
+            texts.append(
+                {
+                    'text': f"C: {mean_C:6.2f}",
+                    'position': (20, 60),
+                    'font': cv2.FONT_HERSHEY_SIMPLEX,
+                    'scale': 1.0,
+                    'color': (0, 255, 255),
+                    'thickness': 2,
+                }
+            )
+            texts.append(
+                {
+                    'text': f"L: {mean_L:6.2f}",
+                    'position': (20, 90),
+                    'font': cv2.FONT_HERSHEY_SIMPLEX,
+                    'scale': 1.0,
+                    'color': (0, 255, 255),
+                    'thickness': 2,
+                }
+            )
+            # Add a fourth row for the decoded QR text.
+            texts.append(
+                {
+                    'text': f"QR: {detection_result['data']}",
+                    'position': (20, 120),
+                    'font': cv2.FONT_HERSHEY_SIMPLEX,
+                    'scale': 1.0,
+                    'color': (0, 255, 255),
+                    'thickness': 2,
+                }
+            )
+
+            display_data = {'texts': texts, 'window_name': "QR HCL Table Display"}
+    # If no QR is detected, return an empty dict; this lets the overlay manager
+    # continue displaying previous overlays until they time out.
+    return display_data
+
+
 # ----------------------------------------------------------------
 # Example launchers
 # ----------------------------------------------------------------
-def run_example1(source=0):
-    """
-    Runs the video pipeline using Example 1:
-    Display the QR code's bounding rectangle and the text it encodes.
-    """
-    qr_detector = make_qr_detector()
-    run_video_pipeline(
-        qr_detector, compute_display_data_example1, default_displayer, source
-    )
+from typing import Callable
+
+DFLT_SOURCE = 0
 
 
-def run_example2(source=0):
-    """
-    Runs the video pipeline using Example 2:
-    Constantly display the computed mean HCL values at a fixed location.
-    """
+def run_example_with_qr_detector(
+    display_data_func: Callable, source: int = DFLT_SOURCE
+):
+    if (
+        isinstance(display_data_func, int)
+        or isinstance(display_data_func, str)
+        and str.isnumeric(display_data_func)
+    ):
+        display_data_func = f"compute_display_data_example{display_data_func}"
+    if isinstance(display_data_func, str):
+        display_data_func_str = display_data_func
+        globals_ = globals()
+
+        display_data_func = globals()[display_data_func_str]
+
     qr_detector = make_qr_detector()
-    run_video_pipeline(
-        qr_detector, compute_display_data_example2, default_displayer, source
-    )
+    run_video_pipeline(qr_detector, display_data_func, default_displayer, source)
 
 
 if __name__ == "__main__":
+    import argh
+
+    argh.dispatch_command(
+        run_example_with_qr_detector,
+    )
     # Uncomment one of the following to run the desired example.
-    # run_example1()
-    run_example2()
-    pass
+    # src_index = 1
+    # example_index = 4
 
-# import cv2
-# import numpy as np
-
-# # Use the proper VideoCapture source.
-# # If your iPhone is exposed as a webcam (e.g., via Continuity Camera or a third-party app),
-# # you might be able to simply use device index 0 or 1.
-# # Alternatively, if your phone streams video over IP, use the appropriate URL.
-# cap = cv2.VideoCapture(0)
-
-# # Create an instance of the QR code detector
-# detector = cv2.QRCodeDetector()
-
-# while True:
-#     ret, frame = cap.read()
-#     if not ret:
-#         break
-
-#     # Detect and decode the QR code in the frame
-#     # data: decoded text (if any), points: corner points of the QR code
-#     data, points, _ = detector.detectAndDecode(frame)
-
-#     if points is not None and data:
-#         # points is a 4x1x2 array, so reshape it to a simple 4x2 array
-#         pts = points[0].astype(int)
-#         # Draw a green polygon around the detected QR code
-#         cv2.polylines(frame, [pts.reshape((-1, 1, 2))], isClosed=True, color=(0, 255, 0), thickness=2)
-
-#         # Compute an axis-aligned bounding rectangle around the QR code
-#         x, y, w, h = cv2.boundingRect(pts.reshape((-1, 1, 2)))
-#         roi = frame[y:y+h, x:x+w]
-
-#         # Convert the ROI from BGR to LAB color space
-#         # Note: OpenCV’s LAB has L scaled to [0,255]. We convert L to [0,100]
-#         lab_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2LAB).astype(np.float32)
-#         L_channel = lab_roi[:, :, 0] * (100.0 / 255.0)
-#         # In OpenCV’s LAB, the a and b channels are offset by 128
-#         a_channel = lab_roi[:, :, 1] - 128.0
-#         b_channel = lab_roi[:, :, 2] - 128.0
-
-#         # Compute hue (in degrees) and chroma for each pixel.
-#         # Hue is computed using arctan2(b, a) and normalized to [0,360)
-#         hue = (np.degrees(np.arctan2(b_channel, a_channel)) + 360) % 360
-#         chroma = np.sqrt(a_channel**2 + b_channel**2)
-
-#         # Calculate mean values over the ROI
-#         mean_L = np.mean(L_channel)
-#         mean_H = np.mean(hue)
-#         mean_C = np.mean(chroma)
-
-#         # Prepare text to overlay on the frame
-#         text = f"Mean HCL: H: {mean_H:.2f}, C: {mean_C:.2f}, L: {mean_L:.2f}"
-#         # Put the text slightly above the bounding rectangle
-#         cv2.putText(frame, text, (x, max(y-10, 20)), cv2.FONT_HERSHEY_SIMPLEX,
-#                     0.6, (255, 0, 0), 2)
-
-#     # Show the frame in a window
-#     cv2.imshow("iPhone Camera", frame)
-#     key = cv2.waitKey(1)
-#     # Press 'q' to quit the loop
-#     if key & 0xFF == ord('q'):
-#         break
-
-# cap.release()
-# cv2.destroyAllWindows()
+    # run_example_with_qr_detector(
+    #     f"compute_display_data_example{example_index}", src_index
+    # )
+    # run_example1(src_index)
+    # run_example2(src_index)
