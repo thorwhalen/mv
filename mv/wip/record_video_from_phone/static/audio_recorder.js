@@ -1,31 +1,22 @@
-// static/recorder.js
+// static/audio_recorder.js
 
-let mediaStream       = null;
-let isRecording       = false;
-let currentRecorder   = null;
-let currentSessionId  = null;
-const CHUNK_DURATION_MS = 5000;   // adjust chunk size here
-
-const preview      = document.getElementById('preview');
-const toggleButton = document.getElementById('toggle');
+let mediaStream = null;
+let isRecording = false;
+let currentRecorder = null;
+let currentSessionId = null;
+const CHUNK_DURATION_MS = 10000;  // 10 seconds per chunk
+const audioPreview = document.getElementById('audioPreview');
 const recordToggleButton = document.getElementById('recordToggle');
-const statusDiv    = document.getElementById('status');
+const statusDiv = document.getElementById('status');
 
-let useFront = false;
+// WebM format constants
+const MIME_TYPE = 'audio/webm;codecs=opus';
+const FILE_EXTENSION = 'webm';
 
 function updateStatus(msg) {
   statusDiv.textContent = msg;
   console.log(msg);
 }
-
-// Toggle front/back camera
-toggleButton.onclick = () => {
-  useFront = !useFront;
-  toggleButton.textContent = useFront
-    ? 'Use Back Camera'
-    : 'Use Front Camera';
-  updateStatus(`Next segments will use the ${useFront ? 'front' : 'back'} camera.`);
-};
 
 // Toggle recording state
 recordToggleButton.onclick = async () => {
@@ -41,15 +32,18 @@ recordToggleButton.onclick = async () => {
     recordToggleButton.disabled = true;
   } else {
     // Start recording
-    updateStatus('Requesting camera access…');
+    updateStatus('Requesting microphone access…');
     try {
       const constraints = {
-        video: { facingMode: useFront ? 'user' : 'environment' },
-        audio: false
+        audio: true,
+        video: false
       };
       mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-      preview.srcObject = mediaStream;
-      await preview.play();
+      
+      if (audioPreview) {
+        audioPreview.srcObject = mediaStream;
+        audioPreview.play();
+      }
       
       // Generate session ID in YYMMDD_HHMMSS format
       const now = new Date();
@@ -59,7 +53,7 @@ recordToggleButton.onclick = async () => {
         .replace(/\..+/, '')
         .slice(2); // Get YYMMDD_HHMMSS format
       
-      updateStatus(`Camera ready. Beginning session ${currentSessionId}…`);
+      updateStatus(`Microphone ready. Beginning session ${currentSessionId}…`);
 
       isRecording = true;
       recordToggleButton.textContent = 'Stop Recording';
@@ -67,7 +61,7 @@ recordToggleButton.onclick = async () => {
 
       recordNextSegment();
     } catch (err) {
-      updateStatus(`Error accessing camera: ${err.message}`);
+      updateStatus(`Error accessing microphone: ${err.message}`);
     }
   }
 };
@@ -84,7 +78,16 @@ function recordNextSegment() {
     return;
   }
 
-  const recorder = new MediaRecorder(mediaStream, { mimeType: 'video/webm; codecs=vp8' });
+  // Check browser support for WebM
+  const options = {};
+  
+  if (MediaRecorder.isTypeSupported(MIME_TYPE)) {
+    options.mimeType = MIME_TYPE;
+  } else {
+    updateStatus(`Warning: ${MIME_TYPE} not supported, using browser default`);
+  }
+  
+  const recorder = new MediaRecorder(mediaStream, options);
   currentRecorder = recorder;
   const chunks = [];
   const startTs = new Date().toISOString();  // mark beginning
@@ -95,10 +98,10 @@ function recordNextSegment() {
 
   recorder.onstop = async () => {
     const endTs = new Date().toISOString();  // mark end
-    const blob = new Blob(chunks, { type: 'video/webm' });
+    const blob = new Blob(chunks, { type: recorder.mimeType || MIME_TYPE });
     const safeStartTs = startTs.replace(/[:.\-]/g,'');
     const safeEndTs = endTs.replace(/[:.\-]/g,'');
-    const filename = `${safeStartTs}_${safeEndTs}.webm`;
+    const filename = `${safeStartTs}_${safeEndTs}.${FILE_EXTENSION}`;
     updateStatus(`Uploading segment ${filename} (${(blob.size/1024).toFixed(1)}KB)…`);
 
     try {
@@ -130,7 +133,7 @@ function recordNextSegment() {
   }, CHUNK_DURATION_MS);
 }
 
-// Release camera when done
+// Release microphone when done
 function cleanupStream() {
   if (mediaStream) {
     mediaStream.getTracks().forEach(t => t.stop());
@@ -139,5 +142,4 @@ function cleanupStream() {
 }
 
 // Initialize UI
-toggleButton.textContent = 'Use Front Camera';
 updateStatus("Ready. Click 'Start Recording' to begin.");

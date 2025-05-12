@@ -1,4 +1,4 @@
-// static/recorder.js
+// static/video_recorder.js
 
 let mediaStream       = null;
 let isRecording       = false;

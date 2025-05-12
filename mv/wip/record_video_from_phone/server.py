@@ -1,15 +1,20 @@
 # server.py
-from fastapi import FastAPI, UploadFile, File, Path, Form
+from fastapi import FastAPI, UploadFile, File, Path, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 import os
+from datetime import datetime
 
 # root directory for saves
 save_rootdir = '/Users/thorwhalen/tmp/mv_video_saves'
 os.makedirs(save_rootdir, exist_ok=True)
 
 app = FastAPI()
+
+# Setup Jinja2 templates
+templates = Jinja2Templates(directory="templates")
 
 # Enable CORS if front-end served elsewhere
 app.add_middleware(
@@ -23,71 +28,117 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-@app.get("/{space}", response_class=HTMLResponse)
-async def get_recorder(space: str = Path(..., description="Subfolder name")):
-    html = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Record to '{space}'</title>
-      <style>
-        body {{ font-family: Arial,sans-serif; max-width:600px; margin:20px auto; }}
-        button {{ padding:10px 20px; margin:5px; font-size:16px; }}
-        video {{ border:1px solid #ccc; width:100%; height:auto; }}
-        #status {{ margin-top:10px; font-family:monospace; white-space:pre-wrap; }}
-        #recordToggle {{ background-color: #4CAF50; color: white; }}
-        #recordToggle.recording {{ background-color: #f44336; animation: blink 1s infinite; }}
-        #recordToggle.stopping {{ background-color: #FF9800; animation: pulse 0.5s infinite; }}
-        @keyframes blink {{ 
-          50% {{ opacity: 0.5; }}
-        }}
-        @keyframes pulse {{ 
-          0% {{ opacity: 1; }}
-          50% {{ opacity: 0.7; }}
-          100% {{ opacity: 1; }}
-        }}
-      </style>
-    </head>
-    <body>
-      <h1>Recording to space: {space}</h1>
-      <video id="preview" autoplay playsinline muted></video>
-      <div>
-        <button id="toggle">Use Front Camera</button>
-        <button id="recordToggle">Start Recording</button>
-      </div>
-      <div id="status">Ready. Click 'Start Recording' to begin.</div>
-      <script src="/static/recorder.js"></script>
-      <script>const space = "{space}";</script>
-    </body>
-    </html>
+@app.get("/video/{space}", response_class=HTMLResponse)
+async def get_video_recorder(
+    request: Request, space: str = Path(..., description="Space")
+):
+    return templates.TemplateResponse(
+        "video_recorder.html", {"request": request, "space": space}
+    )
+
+
+@app.get("/audio/{space}", response_class=HTMLResponse)
+async def get_audio_recorder(
+    request: Request,
+    space: str = Path(..., description="Space"),
+    format: str = "wav",  # Default to wav format
+):
+    return templates.TemplateResponse(
+        "audio_recorder.html", {"request": request, "space": space, "format": format}
+    )
+
+
+def resolve_upload_inputs(start_ts=None, end_ts=None, session=None):
     """
-    return html
+    Resolves input parameters for upload_chunk route.
+
+    Args:
+        start_ts: Start timestamp
+        end_ts: End timestamp
+        session: Session identifier
+
+    Returns:
+        Tuple of (filename_timestamp, session_id)
+    """
+    # Generate filename timestamp based on available inputs
+    if not start_ts and not end_ts:
+        # No timestamps provided, use current time
+        now = datetime.now().isoformat()
+        filename_ts = now.replace(':', '').replace('-', '').replace('.', '')
+    elif start_ts and not end_ts:
+        # Only start_ts provided
+        filename_ts = start_ts.replace(':', '').replace('-', '').replace('.', '')
+    elif not start_ts and end_ts:
+        # Only end_ts provided
+        filename_ts = end_ts.replace(':', '').replace('-', '').replace('.', '')
+    else:
+        # Both timestamps provided
+        safe_start_ts = start_ts.replace(':', '').replace('-', '').replace('.', '')
+        safe_end_ts = end_ts.replace(':', '').replace('-', '').replace('.', '')
+        filename_ts = f"{safe_start_ts}_{safe_end_ts}"
+
+    # Compute session from timestamp if not provided
+    if not session:
+        # Use start_ts for session if available, otherwise end_ts, otherwise current time
+        timestamp_for_session = start_ts or end_ts
+        if timestamp_for_session:
+            try:
+                # Remove Z and microseconds for compatibility
+                clean_ts = timestamp_for_session.replace('Z', '+00:00')
+                if '.' in clean_ts:
+                    clean_ts = clean_ts[: clean_ts.index('.')]
+                dt = datetime.fromisoformat(clean_ts)
+                session = dt.strftime('%y%m%d_%H%M%S')
+            except ValueError:
+                # If parsing fails, use current time
+                session = datetime.now().strftime('%y%m%d_%H%M%S')
+        else:
+            session = datetime.now().strftime('%y%m%d_%H%M%S')
+
+    return filename_ts, session
 
 
-@app.post("/upload/{space}")
-async def upload_frame(
-    space: str = Path(..., description="Subfolder to save into"),
+@app.post("/upload_chunk")
+async def upload_chunk_default(
     file: UploadFile = File(...),
-    start_ts: str = Form(...),
-    end_ts: str = Form(...),
-    session: str = Form(...),
+    start_ts: str = Form(None),
+    end_ts: str = Form(None),
+    session: str = Form(None),
+):
+    """Default route for uploading chunks to the catch_all_space."""
+    return await upload_chunk(file, "catch_all_space", start_ts, end_ts, session)
+
+
+@app.post("/upload_chunk/{space}")
+async def upload_chunk(
+    file: UploadFile = File(...),
+    space: str = Path(..., description="Space to save into"),
+    start_ts: str = Form(None),
+    end_ts: str = Form(None),
+    session: str = Form(None),
 ):
     """
     Receives a video segment and saves it within session subfolder inside space folder.
-    Session subfolder is named with the timestamp of when recording started.
+
+    - If space is not provided, defaults to "catch_all_space" (via the default route)
+    - If no timestamp is given, server uses its own
+    - If only one timestamp is given, uses that for the filename
+    - If session is not provided, computes it from the timestamp
     """
-    # ensure space directory exists
+    # Resolve filename timestamp and session
+    filename_ts, session_id = resolve_upload_inputs(start_ts, end_ts, session)
+
+    # Ensure space directory exists
     space_dirpath = os.path.join(save_rootdir, space)
     os.makedirs(space_dirpath, exist_ok=True)
 
-    # ensure session subdirectory exists
-    session_dirpath = os.path.join(space_dirpath, session)
+    # Ensure session subdirectory exists
+    session_dirpath = os.path.join(space_dirpath, session_id)
     os.makedirs(session_dirpath, exist_ok=True)
 
-    # The filename is already formatted correctly with start_ts and end_ts from the client
-    path = os.path.join(session_dirpath, file.filename)
+    # Create filename with the resolved timestamp
+    filename = f"{filename_ts}.webm"
+    path = os.path.join(session_dirpath, filename)
 
     contents = await file.read()
     with open(path, "wb") as f:
