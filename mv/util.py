@@ -1,7 +1,16 @@
 """Utility functions for the mv package."""
 
 from typing import Literal, Iterable
+from functools import partial
 import cv2
+from config2py import (
+    get_app_data_folder,
+    process_path,
+)
+
+pkg_name = 'mv'
+app_dir = get_app_data_folder(pkg_name, ensure_exists=True)
+app_filepath = partial(process_path, ensure_dir_exists=True, rootdir=app_dir)
 
 
 # Note: Got this list by asking AI to give me the twenty most important properties,

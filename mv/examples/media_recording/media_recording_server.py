@@ -7,9 +7,31 @@ from fastapi.templating import Jinja2Templates
 import os
 from datetime import datetime
 
-# root directory for saves
-save_rootdir = '/Users/thorwhalen/tmp/mv_video_saves'
-os.makedirs(save_rootdir, exist_ok=True)
+from mv.util import process_path
+
+# -------------------------------------------------------------------------------------
+# Resources
+
+save_rootdir = os.environ.get('MV_MEDIA_RECORDINGS_DIR')
+
+if save_rootdir is None:
+    from mv.util import app_filepath
+
+    # Default to current directory if not set
+    save_rootdir = app_filepath('media_recordings', ensure_dir_exists=True)
+
+save_rootdir = process_path(save_rootdir, ensure_dir_exists=True)
+
+# video_recordings_dir = os.path.join(save_rootdir, "video")
+# audio_recordings_dir = os.path.join(save_rootdir, "audio")
+# video_recordings_dir = process_path(video_recordings_dir, ensure_dir_exists=True)
+# audio_recordings_dir = process_path(audio_recordings_dir, ensure_dir_exists=True)
+print("--------------------------------------------------------------------")
+print(f"\nMedia recordings will be saved to: {save_rootdir}\n")
+print("--------------------------------------------------------------------")
+
+# -------------------------------------------------------------------------------------
+# FastAPI app instance
 
 app = FastAPI()
 
@@ -41,10 +63,9 @@ async def get_video_recorder(
 async def get_audio_recorder(
     request: Request,
     space: str = Path(..., description="Space"),
-    format: str = "wav",  # Default to wav format
 ):
     return templates.TemplateResponse(
-        "audio_recorder.html", {"request": request, "space": space, "format": format}
+        "audio_recorder.html", {"request": request, "space": space}
     )
 
 
@@ -138,6 +159,7 @@ async def upload_chunk(
 
     # Create filename with the resolved timestamp
     filename = f"{filename_ts}.webm"
+
     path = os.path.join(session_dirpath, filename)
 
     contents = await file.read()
