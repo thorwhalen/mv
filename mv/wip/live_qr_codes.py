@@ -1,6 +1,50 @@
 """Live QR code detection and decoding"""
 
 
+def dotpath_to_pyobj(dotpath: str):
+    """
+    Convert a dotpath (e.g., "a.b.c") to a Python object (e.g., a.b.c).
+
+    Args:
+        dotpath (str): The dotpath string to convert.
+
+    Returns:
+        object: The Python object corresponding to the dotpath.
+
+    Raises:
+        ValueError: If the dotpath is empty or invalid.
+        ImportError: If the module cannot be imported.
+        AttributeError: If the attribute cannot be found in the module.
+    """
+    import importlib
+
+    if not dotpath or not isinstance(dotpath, str):
+        raise ValueError("dotpath must be a non-empty string")
+
+    parts = dotpath.split('.')
+    if not parts:
+        raise ValueError(f"Invalid dotpath: {dotpath}")
+
+    # Handle module import
+    module_name = parts[0]
+    try:
+        module = importlib.import_module(module_name)
+    except ImportError:
+        raise ImportError(f"Could not import module: {module_name}")
+
+    # Handle remainder of the path
+    obj = module
+    for part in parts[1:]:
+        try:
+            obj = getattr(obj, part)
+        except AttributeError:
+            raise AttributeError(
+                f"'{type(obj).__name__}' object has no attribute '{part}'"
+            )
+
+    return obj
+
+
 def create_qr_code(
     data,
     *,
@@ -439,8 +483,14 @@ DFLT_SOURCE = 0
 
 
 def run_example_with_qr_detector(
-    display_data_func: Callable, source: int = DFLT_SOURCE
+    display_data_func: Callable = None, source: int = DFLT_SOURCE
 ):
+
+    if display_data_func is None:
+        raise ValueError(
+            "display_data_func must be provided. Use a function, int or a string "
+            "representing the function name."
+        )
     if (
         isinstance(display_data_func, int)
         or isinstance(display_data_func, str)
@@ -448,10 +498,12 @@ def run_example_with_qr_detector(
     ):
         display_data_func = f"compute_display_data_example{display_data_func}"
     if isinstance(display_data_func, str):
-        display_data_func_str = display_data_func
-        globals_ = globals()
-
-        display_data_func = globals()[display_data_func_str]
+        if '.' in display_data_func:
+            # If the string is a dotpath, convert it to a Python object.
+            display_data_func = dotpath_to_pyobj(display_data_func)
+        else:
+            global_vars = globals()
+            display_data_func = global_vars.get(display_data_func)
 
     qr_detector = make_qr_detector()
     run_video_pipeline(qr_detector, display_data_func, default_displayer, source)
