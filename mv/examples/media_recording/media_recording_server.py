@@ -31,6 +31,62 @@ print(f"\nMedia recordings will be saved to: {save_rootdir}\n")
 print("--------------------------------------------------------------------")
 
 # -------------------------------------------------------------------------------------
+# Store concerns
+# TODO: Refactor to dol 
+
+import os
+from typing import Optional, Tuple
+
+def get_path(
+    save_rootdir: str,
+    space: str,
+    start_ts: Optional[str],
+    end_ts: Optional[str],
+    session: Optional[str],
+    resolve_upload_inputs: callable
+) -> Tuple[str, str]:
+    """
+    Compute the full path to save the file.
+    
+    Args:
+        save_rootdir: Root directory for saving files
+        space: Namespace or subdirectory
+        start_ts: Optional start timestamp
+        end_ts: Optional end timestamp
+        session: Optional session identifier
+        resolve_upload_inputs: Function to resolve timestamps and session ID
+        
+    Returns:
+        Tuple containing the full file path and the session ID
+    """
+    filename_ts, session_id = resolve_upload_inputs(start_ts, end_ts, session)
+    session_dirpath = os.path.join(save_rootdir, space, session_id)
+    filename = f"{filename_ts}.webm"
+    path = os.path.join(session_dirpath, filename)
+    return path, session_id
+
+
+def store_contents(path: str, contents: bytes):
+    """
+    Write binary contents to the given path, ensuring the directory exists.
+    
+    Args:
+        path: The full path where contents should be saved
+        contents: The binary data to save
+        
+    """
+    # Ensure the directory exists
+    dirpath = os.path.dirname(path)
+    os.makedirs(dirpath, exist_ok=True)
+    
+    # Write the contents
+    with open(path, "wb") as f:
+        f.write(contents)
+
+
+# from dol import Files, wrap_kvs, mk_dirs_if_missing
+
+# -------------------------------------------------------------------------------------
 # FastAPI app instance
 
 app = FastAPI()
@@ -138,32 +194,7 @@ async def upload_chunk(
     end_ts: str = Form(None),
     session: str = Form(None),
 ):
-    """
-    Receives a video segment and saves it within session subfolder inside space folder.
-
-    - If space is not provided, defaults to "catch_all_space" (via the default route)
-    - If no timestamp is given, server uses its own
-    - If only one timestamp is given, uses that for the filename
-    - If session is not provided, computes it from the timestamp
-    """
-    # Resolve filename timestamp and session
-    filename_ts, session_id = resolve_upload_inputs(start_ts, end_ts, session)
-
-    # Ensure space directory exists
-    space_dirpath = os.path.join(save_rootdir, space)
-    os.makedirs(space_dirpath, exist_ok=True)
-
-    # Ensure session subdirectory exists
-    session_dirpath = os.path.join(space_dirpath, session_id)
-    os.makedirs(session_dirpath, exist_ok=True)
-
-    # Create filename with the resolved timestamp
-    filename = f"{filename_ts}.webm"
-
-    path = os.path.join(session_dirpath, filename)
-
-    contents = await file.read()
-    with open(path, "wb") as f:
-        f.write(contents)
-
+    path = get_path(save_rootdir, space, start_ts, end_ts, session, resolve_upload_inputs)
+    contents = file.read()
+    store_contents(path, contents)
     return {"status": "saved", "path": path}
