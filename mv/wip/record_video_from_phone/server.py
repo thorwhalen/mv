@@ -65,18 +65,27 @@ async def upload_frame(
     space: str = Path(..., description="Subfolder to save into"),
     file: UploadFile = File(...),
     ts: str = Form(...),
+    session: str = Form(...),
 ):
     """
-    Receives a video segment and names it with the client-provided timestamp.
+    Receives a video segment and saves it within session subfolder inside space folder.
+    Session subfolder is named with the timestamp of when recording started.
     """
-    # ensure directory exists
-    dirpath = os.path.join(save_rootdir, space)
-    os.makedirs(dirpath, exist_ok=True)
+    # ensure space directory exists
+    space_dirpath = os.path.join(save_rootdir, space)
+    os.makedirs(space_dirpath, exist_ok=True)
+
+    # ensure session subdirectory exists
+    session_dirpath = os.path.join(space_dirpath, session)
+    os.makedirs(session_dirpath, exist_ok=True)
+
     # sanitize ts for filename
     safe_ts = ts.replace(':', '').replace('-', '').replace('.', '')
     filename = f"{safe_ts}_{file.filename}"
-    path = os.path.join(dirpath, filename)
+    path = os.path.join(session_dirpath, filename)
+
     contents = await file.read()
     with open(path, "wb") as f:
         f.write(contents)
+
     return {"status": "saved", "path": path}

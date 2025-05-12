@@ -3,6 +3,7 @@
 let mediaStream       = null;
 let isRecording       = false;
 let currentRecorder   = null;
+let currentSessionId  = null;
 const CHUNK_DURATION_MS = 5000;   // adjust chunk size here
 
 const preview      = document.getElementById('preview');
@@ -44,7 +45,16 @@ recordToggleButton.onclick = async () => {
       mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       preview.srcObject = mediaStream;
       await preview.play();
-      updateStatus('Camera ready. Beginning segment capture…');
+      
+      // Generate session ID in YYMMDD_HHMMSS format
+      const now = new Date();
+      currentSessionId = now.toISOString()
+        .replace(/[-:]/g, '')
+        .replace(/T/, '_')
+        .replace(/\..+/, '')
+        .slice(2); // Get YYMMDD_HHMMSS format
+      
+      updateStatus(`Camera ready. Beginning session ${currentSessionId}…`);
 
       isRecording = true;
       recordToggleButton.textContent = 'Stop Recording';
@@ -86,6 +96,7 @@ function recordNextSegment() {
       const form = new FormData();
       form.append('file', blob, filename);
       form.append('ts', startTs);
+      form.append('session', currentSessionId);
       const res = await fetch(`/upload/${space}`, {
         method: 'POST',
         body: form
