@@ -39,8 +39,14 @@ async def get_recorder(space: str = Path(..., description="Subfolder name")):
         #status {{ margin-top:10px; font-family:monospace; white-space:pre-wrap; }}
         #recordToggle {{ background-color: #4CAF50; color: white; }}
         #recordToggle.recording {{ background-color: #f44336; animation: blink 1s infinite; }}
+        #recordToggle.stopping {{ background-color: #FF9800; animation: pulse 0.5s infinite; }}
         @keyframes blink {{ 
           50% {{ opacity: 0.5; }}
+        }}
+        @keyframes pulse {{ 
+          0% {{ opacity: 1; }}
+          50% {{ opacity: 0.7; }}
+          100% {{ opacity: 1; }}
         }}
       </style>
     </head>
@@ -64,7 +70,8 @@ async def get_recorder(space: str = Path(..., description="Subfolder name")):
 async def upload_frame(
     space: str = Path(..., description="Subfolder to save into"),
     file: UploadFile = File(...),
-    ts: str = Form(...),
+    start_ts: str = Form(...),
+    end_ts: str = Form(...),
     session: str = Form(...),
 ):
     """
@@ -79,10 +86,8 @@ async def upload_frame(
     session_dirpath = os.path.join(space_dirpath, session)
     os.makedirs(session_dirpath, exist_ok=True)
 
-    # sanitize ts for filename
-    safe_ts = ts.replace(':', '').replace('-', '').replace('.', '')
-    filename = f"{safe_ts}_{file.filename}"
-    path = os.path.join(session_dirpath, filename)
+    # The filename is already formatted correctly with start_ts and end_ts from the client
+    path = os.path.join(session_dirpath, file.filename)
 
     contents = await file.read()
     with open(path, "wb") as f:

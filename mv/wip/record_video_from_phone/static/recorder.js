@@ -33,6 +33,11 @@ recordToggleButton.onclick = async () => {
     // Stop recording
     isRecording = false;
     updateStatus('Will stop after current segment…');
+    
+    // Visual feedback that stopping is in progress
+    recordToggleButton.textContent = 'Stopping...';
+    recordToggleButton.classList.remove('recording');
+    recordToggleButton.classList.add('stopping');
     recordToggleButton.disabled = true;
   } else {
     // Start recording
@@ -73,6 +78,7 @@ function recordNextSegment() {
     cleanupStream();
     recordToggleButton.textContent = 'Start Recording';
     recordToggleButton.classList.remove('recording');
+    recordToggleButton.classList.remove('stopping');
     recordToggleButton.disabled = false;
     updateStatus('Recording fully stopped.');
     return;
@@ -88,14 +94,18 @@ function recordNextSegment() {
   };
 
   recorder.onstop = async () => {
+    const endTs = new Date().toISOString();  // mark end
     const blob = new Blob(chunks, { type: 'video/webm' });
-    const filename = `${startTs.replace(/[:.\-]/g,'')}.webm`;
+    const safeStartTs = startTs.replace(/[:.\-]/g,'');
+    const safeEndTs = endTs.replace(/[:.\-]/g,'');
+    const filename = `${safeStartTs}_${safeEndTs}.webm`;
     updateStatus(`Uploading segment ${filename} (${(blob.size/1024).toFixed(1)}KB)…`);
 
     try {
       const form = new FormData();
       form.append('file', blob, filename);
-      form.append('ts', startTs);
+      form.append('start_ts', startTs);
+      form.append('end_ts', endTs);
       form.append('session', currentSessionId);
       const res = await fetch(`/upload/${space}`, {
         method: 'POST',
