@@ -83,7 +83,9 @@ def create_qr_code(
     return img
 
 
-def grid_image(imgs, *, n_rows=None, n_cols=1, v_padding=0, h_padding=0):
+def grid_image(
+    imgs, *, n_rows=None, n_cols=1, v_padding=0, h_padding=0, convert_to_rgb=True
+):
     """
     Create a grid of images from a list of images.
 
@@ -95,6 +97,7 @@ def grid_image(imgs, *, n_rows=None, n_cols=1, v_padding=0, h_padding=0):
         n_cols (int, optional): Number of columns in the grid. Default is 1. If None, computed from n_rows and len(imgs).
         v_padding (int): Vertical padding between images in pixels. Default is 0.
         h_padding (int): Horizontal padding between images in pixels. Default is 0.
+        convert_to_rgb (bool): If True, convert images to RGB mode. Default is True.
 
     Returns:
         PIL.Image.Image: A new image with all input images arranged in a grid.
@@ -129,6 +132,10 @@ def grid_image(imgs, *, n_rows=None, n_cols=1, v_padding=0, h_padding=0):
         n_rows = -(-num_imgs // n_cols)  # Ceiling division
     elif n_cols is None:
         n_cols = -(-num_imgs // n_rows)  # Ceiling division
+
+    if convert_to_rgb:
+        # Convert images to RGB to avoid issues with differing modes
+        imgs = [img.convert("RGB") for img in imgs]
 
     # Get individual image dimensions (assumes all images are the same size)
     img_width, img_height = imgs[0].size
