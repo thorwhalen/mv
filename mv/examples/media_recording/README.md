@@ -7,22 +7,24 @@ A simple FastAPI + web front-end proof-of-concept for recording video from a pho
 From your development machine. Open in your browser:
 
 ```bash
-https://localhost:8000/<space>
+http://localhost:8000/video/<space>  # For video recording
+http://localhost:8000/audio/<space>  # For audio recording
 ```
 
-e.g. https://localhost:8000/test
+e.g. http://localhost:8000/video/test
 
 
 ### Remotely
 
-This requires doing more setup (see the TLS section
+This requires doing more setup (see the TLS section)
 
 From a phone or other device on the same LAN
 
 In Safari/Chrome, navigate to:
 
 ```
-https://IP_ADDRESS:8000/<space>
+https://IP_ADDRESS:8000/video/<space>  # For video recording
+https://IP_ADDRESS:8000/audio/<space>  # For audio recording
 ```
 
 ## TLS: Generating & trusting a local TLS certificate

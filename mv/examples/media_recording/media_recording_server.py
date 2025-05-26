@@ -32,10 +32,11 @@ print("--------------------------------------------------------------------")
 
 # -------------------------------------------------------------------------------------
 # Store concerns
-# TODO: Refactor to dol 
+# TODO: Refactor to dol
 
 import os
 from typing import Optional, Tuple
+
 
 def get_path(
     save_rootdir: str,
@@ -43,11 +44,11 @@ def get_path(
     start_ts: Optional[str],
     end_ts: Optional[str],
     session: Optional[str],
-    resolve_upload_inputs: callable
+    resolve_upload_inputs: callable,
 ) -> Tuple[str, str]:
     """
     Compute the full path to save the file.
-    
+
     Args:
         save_rootdir: Root directory for saving files
         space: Namespace or subdirectory
@@ -55,7 +56,7 @@ def get_path(
         end_ts: Optional end timestamp
         session: Optional session identifier
         resolve_upload_inputs: Function to resolve timestamps and session ID
-        
+
     Returns:
         Tuple containing the full file path and the session ID
     """
@@ -69,16 +70,16 @@ def get_path(
 def store_contents(path: str, contents: bytes):
     """
     Write binary contents to the given path, ensuring the directory exists.
-    
+
     Args:
         path: The full path where contents should be saved
         contents: The binary data to save
-        
+
     """
     # Ensure the directory exists
     dirpath = os.path.dirname(path)
     os.makedirs(dirpath, exist_ok=True)
-    
+
     # Write the contents
     with open(path, "wb") as f:
         f.write(contents)
@@ -194,7 +195,67 @@ async def upload_chunk(
     end_ts: str = Form(None),
     session: str = Form(None),
 ):
-    path = get_path(save_rootdir, space, start_ts, end_ts, session, resolve_upload_inputs)
+    path = get_path(
+        save_rootdir, space, start_ts, end_ts, session, resolve_upload_inputs
+    )
     contents = file.read()
     store_contents(path, contents)
     return {"status": "saved", "path": path}
+
+
+# Add a root route handler
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    html_content = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Media Recording Server</title>
+        <style>
+            body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+            h1 { color: #444; }
+            .container { display: flex; gap: 20px; margin-top: 20px; }
+            .card { background: #f5f5f5; border-radius: 8px; padding: 20px; flex: 1; }
+            .card h2 { margin-top: 0; }
+            a { display: inline-block; background: #444; color: white; padding: 10px 15px; 
+               text-decoration: none; border-radius: 4px; margin-top: 10px; }
+            input { padding: 8px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+        </style>
+    </head>
+    <body>
+        <h1>Media Recording Server</h1>
+        <p>Enter a space name and choose which recorder to access:</p>
+        
+        <input type="text" id="spaceInput" placeholder="Enter space name (e.g. test)" value="test">
+        
+        <div class="container">
+            <div class="card">
+                <h2>Video Recorder</h2>
+                <p>Record video from your device's camera</p>
+                <a href="#" onclick="goTo('video')">Access Video Recorder</a>
+            </div>
+            
+            <div class="card">
+                <h2>Audio Recorder</h2>
+                <p>Record audio from your device's microphone</p>
+                <a href="#" onclick="goTo('audio')">Access Audio Recorder</a>
+            </div>
+        </div>
+
+        <script>
+            function goTo(type) {
+                const space = document.getElementById('spaceInput').value || 'test';
+                window.location.href = `/${type}/${space}`;
+            }
+        </script>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    # Run the FastAPI app with Uvicorn
+    uvicorn.run(app)
