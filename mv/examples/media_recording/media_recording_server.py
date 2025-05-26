@@ -195,12 +195,12 @@ async def upload_chunk(
     end_ts: str = Form(None),
     session: str = Form(None),
 ):
-    path = get_path(
+    path, session_id = get_path(
         save_rootdir, space, start_ts, end_ts, session, resolve_upload_inputs
     )
-    contents = file.read()
+    contents = await file.read()  # Add await here
     store_contents(path, contents)
-    return {"status": "saved", "path": path}
+    return {"status": "saved", "path": path, "session": session_id}
 
 
 # Add a root route handler
