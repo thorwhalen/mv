@@ -74,7 +74,7 @@ def reverse_video_w_moviepy(input_path, output_path=None):
     except Exception as e:
         print(f"Error reversing video with MoviePy: {str(e)}")
         print("Falling back to FFmpeg method...")
-        return reverse_video_ffmpeg(input_path, output_path)
+        return reverse_video_w_ffmpeg(input_path, output_path)
 
 
 def reverse_video_w_ffmpeg(input_path, output_path=None):
@@ -218,6 +218,4 @@ def reverse_video_w_ffmpeg(input_path, output_path=None):
         raise
 
 
-reverse_video = reverse_video_with_ffmpeg = (
-    reverse_video_ffmpeg  # Alias for the main function
-)
+reverse_video = reverse_video_w_ffmpeg
