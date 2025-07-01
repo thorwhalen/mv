@@ -10,6 +10,18 @@ run ML models, and display results.
 
 # Examples
 
+## Record video from camera
+
+```python
+from mv.util import record_video_from_camera
+
+# To record and save to a file (auto-named if not given):
+record_video_from_camera()  # Press ESC or Ctrl+C to stop
+
+# Or specify a filename:
+record_video_from_camera("my_recording.mp4")
+```
+
 ## Reverse video
 
 ```py
