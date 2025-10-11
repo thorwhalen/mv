@@ -4,14 +4,14 @@ from typing import Literal, Iterable
 from functools import partial
 import cv2
 from config2py import (
-    get_app_data_folder,
+    get_app_config_folder,
     process_path,
 )
 import os
 import datetime
 
 pkg_name = 'mv'
-app_dir = get_app_data_folder(pkg_name, ensure_exists=True)
+app_dir = get_app_config_folder(pkg_name, ensure_exists=True)
 app_filepath = partial(process_path, ensure_dir_exists=True, rootdir=app_dir)
 
 
