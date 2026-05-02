@@ -10,7 +10,7 @@ from config2py import (
 import os
 import datetime
 
-pkg_name = 'mv'
+pkg_name = "mv"
 app_dir = get_app_config_folder(pkg_name, ensure_exists=True)
 app_filepath = partial(process_path, ensure_dir_exists=True, rootdir=app_dir)
 
@@ -63,7 +63,7 @@ CameraProperty = Literal[
     "gamma",
     "backend",
 ]
-DFLT_CAMERA_PROPERTIES = ('frame_width', 'frame_height', 'fps', 'zoom', 'backend')
+DFLT_CAMERA_PROPERTIES = ("frame_width", "frame_height", "fps", "zoom", "backend")
 
 
 def scan_for_openable_video_indices(
@@ -98,9 +98,9 @@ def scan_for_openable_video_indices(
 
         cap = cv2.VideoCapture(i)
         if cap.isOpened():
-            info = {'index': i}
+            info = {"index": i}
             for prop in properties:
-                prop_cv2_name = cv2.__dict__[f'CAP_PROP_{prop.upper()}']
+                prop_cv2_name = cv2.__dict__[f"CAP_PROP_{prop.upper()}"]
                 value = cap.get(prop_cv2_name)
                 if value is not None:
                     info[prop] = value

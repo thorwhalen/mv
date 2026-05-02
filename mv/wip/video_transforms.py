@@ -119,19 +119,19 @@ def reverse_video_w_ffmpeg(input_path, output_path=None):
         # Step 1: Reverse the video stream (without audio)
         print("Reversing video stream...")
         video_cmd = [
-            'ffmpeg',
-            '-y',
-            '-i',
+            "ffmpeg",
+            "-y",
+            "-i",
             input_path,
-            '-vf',
-            'reverse',
-            '-an',  # No audio
-            '-c:v',
-            'libx264',
-            '-preset',
-            'medium',
-            '-crf',
-            '22',
+            "-vf",
+            "reverse",
+            "-an",  # No audio
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-crf",
+            "22",
             temp_video,
         ]
         print(f"Running command: {' '.join(video_cmd)}")
@@ -140,14 +140,14 @@ def reverse_video_w_ffmpeg(input_path, output_path=None):
         # Check if the video has audio
         has_audio = False
         probe_cmd = [
-            'ffprobe',
-            '-i',
+            "ffprobe",
+            "-i",
             input_path,
-            '-show_streams',
-            '-select_streams',
-            'a',
-            '-loglevel',
-            'error',
+            "-show_streams",
+            "-select_streams",
+            "a",
+            "-loglevel",
+            "error",
         ]
         probe_result = subprocess.run(probe_cmd, capture_output=True, text=True)
         if probe_result.stdout.strip():
@@ -157,17 +157,17 @@ def reverse_video_w_ffmpeg(input_path, output_path=None):
             # Step 2: Extract and reverse the audio stream
             print("Extracting and reversing audio stream...")
             audio_cmd = [
-                'ffmpeg',
-                '-y',
-                '-i',
+                "ffmpeg",
+                "-y",
+                "-i",
                 input_path,
-                '-vn',  # No video
-                '-af',
-                'areverse',
-                '-c:a',
-                'aac',
-                '-b:a',
-                '192k',
+                "-vn",  # No video
+                "-af",
+                "areverse",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "192k",
                 temp_audio,
             ]
             print(f"Running command: {' '.join(audio_cmd)}")
@@ -176,21 +176,21 @@ def reverse_video_w_ffmpeg(input_path, output_path=None):
             # Step 3: Combine reversed video and audio
             print(f"Combining reversed video and audio to: {output_path}")
             combine_cmd = [
-                'ffmpeg',
-                '-y',
-                '-i',
+                "ffmpeg",
+                "-y",
+                "-i",
                 temp_video,
-                '-i',
+                "-i",
                 temp_audio,
-                '-c:v',
-                'copy',  # Copy video stream without re-encoding
-                '-c:a',
-                'aac',  # Make sure audio is in AAC format
-                '-map',
-                '0:v:0',
-                '-map',
-                '1:a:0',  # Map first video stream and first audio stream
-                '-shortest',  # Take the shortest of the streams
+                "-c:v",
+                "copy",  # Copy video stream without re-encoding
+                "-c:a",
+                "aac",  # Make sure audio is in AAC format
+                "-map",
+                "0:v:0",
+                "-map",
+                "1:a:0",  # Map first video stream and first audio stream
+                "-shortest",  # Take the shortest of the streams
                 output_path,
             ]
             print(f"Running command: {' '.join(combine_cmd)}")

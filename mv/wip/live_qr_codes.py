@@ -21,7 +21,7 @@ def dotpath_to_pyobj(dotpath: str):
     if not dotpath or not isinstance(dotpath, str):
         raise ValueError("dotpath must be a non-empty string")
 
-    parts = dotpath.split('.')
+    parts = dotpath.split(".")
     if not parts:
         raise ValueError(f"Invalid dotpath: {dotpath}")
 
@@ -48,8 +48,8 @@ def dotpath_to_pyobj(dotpath: str):
 def create_qr_code(
     data,
     *,
-    fill_color='black',
-    back_color='white',
+    fill_color="black",
+    back_color="white",
     box_size=10,
     border=4,
     **extra_qrcode_kwargs,
@@ -145,7 +145,7 @@ def grid_image(
     grid_height = n_rows * img_height + (n_rows - 1) * v_padding
 
     # Create a blank image to hold the grid
-    grid_img = Image.new('RGB', (grid_width, grid_height), color=(255, 255, 255))
+    grid_img = Image.new("RGB", (grid_width, grid_height), color=(255, 255, 255))
 
     # Paste images onto the grid
     for idx, img in enumerate(imgs):
@@ -177,17 +177,17 @@ class OverlayManager:
 
     def __init__(self, overlay_duration=2.0):
         self.overlay_duration = overlay_duration
-        self.overlays = {'polygons': [], 'texts': []}
+        self.overlays = {"polygons": [], "texts": []}
 
     def update(self, new_overlays):
         """Adds new overlay items from the provided dictionary."""
         now = time.time()
-        if 'polygons' in new_overlays:
-            for poly in new_overlays['polygons']:
-                self.overlays['polygons'].append((poly, now))
-        if 'texts' in new_overlays:
-            for text_item in new_overlays['texts']:
-                self.overlays['texts'].append((text_item, now))
+        if "polygons" in new_overlays:
+            for poly in new_overlays["polygons"]:
+                self.overlays["polygons"].append((poly, now))
+        if "texts" in new_overlays:
+            for text_item in new_overlays["texts"]:
+                self.overlays["texts"].append((text_item, now))
 
     def render(self, frame):
         """Renders all overlays that are still fresh onto the frame."""
@@ -197,21 +197,21 @@ class OverlayManager:
             _, timestamp = overlay
             return (now - timestamp) <= self.overlay_duration
 
-        self.overlays['polygons'] = list(filter(keep, self.overlays['polygons']))
-        self.overlays['texts'] = list(filter(keep, self.overlays['texts']))
+        self.overlays["polygons"] = list(filter(keep, self.overlays["polygons"]))
+        self.overlays["texts"] = list(filter(keep, self.overlays["texts"]))
 
-        for poly, _ in self.overlays['polygons']:
+        for poly, _ in self.overlays["polygons"]:
             cv2.polylines(frame, [poly], isClosed=True, color=(0, 255, 0), thickness=2)
 
-        for text_item, _ in self.overlays['texts']:
+        for text_item, _ in self.overlays["texts"]:
             cv2.putText(
                 frame,
-                text_item['text'],
-                text_item['position'],
-                text_item.get('font', cv2.FONT_HERSHEY_SIMPLEX),
-                text_item.get('scale', 0.6),
-                text_item.get('color', (255, 0, 0)),
-                text_item.get('thickness', 2),
+                text_item["text"],
+                text_item["position"],
+                text_item.get("font", cv2.FONT_HERSHEY_SIMPLEX),
+                text_item.get("scale", 0.6),
+                text_item.get("color", (255, 0, 0)),
+                text_item.get("thickness", 2),
             )
         return frame
 
@@ -231,7 +231,7 @@ def default_displayer(frame, display_data):
     if display_data is None:
         display_data = {}
     overlay_manager.update(display_data)
-    window_name = display_data.get('window_name', "Video")
+    window_name = display_data.get("window_name", "Video")
     overlay_manager.render(frame)
     cv2.imshow(window_name, frame)
 
@@ -259,7 +259,7 @@ def run_video_pipeline(detector, compute_display_data, displayer, source=0):
             display_data = compute_display_data(detection_result, frame)
             displayer(frame, display_data)
             key = cv2.waitKey(1)
-            if key & 0xFF == ord('q'):
+            if key & 0xFF == ord("q"):
                 break
 
 
@@ -272,7 +272,7 @@ def make_qr_detector():
     def detector(frame):
         data, points, _ = qr_detector_obj.detectAndDecode(frame)
         if points is not None and data:
-            return {'data': data, 'points': points}
+            return {"data": data, "points": points}
         return None
 
     return detector
@@ -284,24 +284,24 @@ def make_qr_detector():
 def compute_display_data_example1(detection_result, frame):
     display_data = {}
     if detection_result is not None:
-        pts = detection_result['points'][0].astype(int)
+        pts = detection_result["points"][0].astype(int)
         poly = pts.reshape((-1, 1, 2))
-        display_data.setdefault('polygons', []).append(poly)
+        display_data.setdefault("polygons", []).append(poly)
 
         # Display the encoded text near the bounding box.
         x, y, _, _ = cv2.boundingRect(pts.reshape((-1, 1, 2)))
         text_position = (x, max(y - 10, 20))
-        display_data.setdefault('texts', []).append(
+        display_data.setdefault("texts", []).append(
             {
-                'text': detection_result['data'],
-                'position': text_position,
-                'font': cv2.FONT_HERSHEY_SIMPLEX,
-                'scale': 0.8,
-                'color': (255, 0, 0),
-                'thickness': 2,
+                "text": detection_result["data"],
+                "position": text_position,
+                "font": cv2.FONT_HERSHEY_SIMPLEX,
+                "scale": 0.8,
+                "color": (255, 0, 0),
+                "thickness": 2,
             }
         )
-    display_data['window_name'] = "QR Code Display"
+    display_data["window_name"] = "QR Code Display"
     return display_data
 
 
@@ -311,7 +311,7 @@ def compute_display_data_example1(detection_result, frame):
 def compute_display_data_example2(detection_result, frame):
     display_data = {}
     if detection_result is not None:
-        pts = detection_result['points'][0].astype(int)
+        pts = detection_result["points"][0].astype(int)
         x, y, w, h = cv2.boundingRect(pts.reshape((-1, 1, 2)))
         roi = frame[y : y + h, x : x + w]
         if roi.size > 0:
@@ -330,17 +330,17 @@ def compute_display_data_example2(detection_result, frame):
             text = f"H: {mean_H:6.2f}  C: {mean_C:6.2f}  L: {mean_L:6.2f}"
             # Fixed display location (e.g., top-left corner)
             text_position = (20, 30)
-            display_data.setdefault('texts', []).append(
+            display_data.setdefault("texts", []).append(
                 {
-                    'text': text,
-                    'position': text_position,
-                    'font': cv2.FONT_HERSHEY_SIMPLEX,
-                    'scale': 1.5,
-                    'color': (0, 0, 255),
-                    'thickness': 2,
+                    "text": text,
+                    "position": text_position,
+                    "font": cv2.FONT_HERSHEY_SIMPLEX,
+                    "scale": 1.5,
+                    "color": (0, 0, 255),
+                    "thickness": 2,
                 }
             )
-    display_data['window_name'] = "Color Values Display"
+    display_data["window_name"] = "Color Values Display"
     return display_data
 
 
@@ -374,36 +374,36 @@ def compute_display_data_example3(detection_result, frame):
     # Fixed positions for each row (adjust Y positions as needed).
     texts.append(
         {
-            'text': f"H: {mean_H:6.2f}",
-            'position': (20, 30),
-            'font': cv2.FONT_HERSHEY_SIMPLEX,
-            'scale': 1.0,
-            'color': (0, 255, 0),
-            'thickness': 2,
+            "text": f"H: {mean_H:6.2f}",
+            "position": (20, 30),
+            "font": cv2.FONT_HERSHEY_SIMPLEX,
+            "scale": 1.0,
+            "color": (0, 255, 0),
+            "thickness": 2,
         }
     )
     texts.append(
         {
-            'text': f"C: {mean_C:6.2f}",
-            'position': (20, 60),
-            'font': cv2.FONT_HERSHEY_SIMPLEX,
-            'scale': 1.0,
-            'color': (0, 255, 0),
-            'thickness': 2,
+            "text": f"C: {mean_C:6.2f}",
+            "position": (20, 60),
+            "font": cv2.FONT_HERSHEY_SIMPLEX,
+            "scale": 1.0,
+            "color": (0, 255, 0),
+            "thickness": 2,
         }
     )
     texts.append(
         {
-            'text': f"L: {mean_L:6.2f}",
-            'position': (20, 90),
-            'font': cv2.FONT_HERSHEY_SIMPLEX,
-            'scale': 1.0,
-            'color': (0, 255, 0),
-            'thickness': 2,
+            "text": f"L: {mean_L:6.2f}",
+            "position": (20, 90),
+            "font": cv2.FONT_HERSHEY_SIMPLEX,
+            "scale": 1.0,
+            "color": (0, 255, 0),
+            "thickness": 2,
         }
     )
 
-    return {'texts': texts, 'window_name': "HCL Table Display"}
+    return {"texts": texts, "window_name": "HCL Table Display"}
 
 
 def compute_display_data_example4(detection_result, frame):
@@ -415,7 +415,7 @@ def compute_display_data_example4(detection_result, frame):
     display_data = {}
     if detection_result is not None:
         # Use the bounding rectangle from the detected QR code.
-        pts = detection_result['points'][0].astype(int)
+        pts = detection_result["points"][0].astype(int)
         x, y, w, h = cv2.boundingRect(pts.reshape((-1, 1, 2)))
         roi = frame[y : y + h, x : x + w]
         if roi.size > 0:
@@ -435,47 +435,47 @@ def compute_display_data_example4(detection_result, frame):
             # Display each value in a fixed row (e.g., rows 1-3) with fixed-width formatting.
             texts.append(
                 {
-                    'text': f"H: {mean_H:6.2f}",
-                    'position': (20, 30),
-                    'font': cv2.FONT_HERSHEY_SIMPLEX,
-                    'scale': 1.0,
-                    'color': (0, 255, 255),
-                    'thickness': 2,
+                    "text": f"H: {mean_H:6.2f}",
+                    "position": (20, 30),
+                    "font": cv2.FONT_HERSHEY_SIMPLEX,
+                    "scale": 1.0,
+                    "color": (0, 255, 255),
+                    "thickness": 2,
                 }
             )
             texts.append(
                 {
-                    'text': f"C: {mean_C:6.2f}",
-                    'position': (20, 60),
-                    'font': cv2.FONT_HERSHEY_SIMPLEX,
-                    'scale': 1.0,
-                    'color': (0, 255, 255),
-                    'thickness': 2,
+                    "text": f"C: {mean_C:6.2f}",
+                    "position": (20, 60),
+                    "font": cv2.FONT_HERSHEY_SIMPLEX,
+                    "scale": 1.0,
+                    "color": (0, 255, 255),
+                    "thickness": 2,
                 }
             )
             texts.append(
                 {
-                    'text': f"L: {mean_L:6.2f}",
-                    'position': (20, 90),
-                    'font': cv2.FONT_HERSHEY_SIMPLEX,
-                    'scale': 1.0,
-                    'color': (0, 255, 255),
-                    'thickness': 2,
+                    "text": f"L: {mean_L:6.2f}",
+                    "position": (20, 90),
+                    "font": cv2.FONT_HERSHEY_SIMPLEX,
+                    "scale": 1.0,
+                    "color": (0, 255, 255),
+                    "thickness": 2,
                 }
             )
             # Add a fourth row for the decoded QR text.
             texts.append(
                 {
-                    'text': f"QR: {detection_result['data']}",
-                    'position': (20, 120),
-                    'font': cv2.FONT_HERSHEY_SIMPLEX,
-                    'scale': 1.0,
-                    'color': (0, 255, 255),
-                    'thickness': 2,
+                    "text": f"QR: {detection_result['data']}",
+                    "position": (20, 120),
+                    "font": cv2.FONT_HERSHEY_SIMPLEX,
+                    "scale": 1.0,
+                    "color": (0, 255, 255),
+                    "thickness": 2,
                 }
             )
 
-            display_data = {'texts': texts, 'window_name': "QR HCL Table Display"}
+            display_data = {"texts": texts, "window_name": "QR HCL Table Display"}
     # If no QR is detected, return an empty dict; this lets the overlay manager
     # continue displaying previous overlays until they time out.
     return display_data
@@ -505,7 +505,7 @@ def run_example_with_qr_detector(
     ):
         display_data_func = f"compute_display_data_example{display_data_func}"
     if isinstance(display_data_func, str):
-        if '.' in display_data_func:
+        if "." in display_data_func:
             # If the string is a dotpath, convert it to a Python object.
             display_data_func = dotpath_to_pyobj(display_data_func)
         else:
