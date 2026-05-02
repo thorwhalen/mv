@@ -484,7 +484,7 @@ def compute_display_data_example4(detection_result, frame):
 # ----------------------------------------------------------------
 # Example launchers
 # ----------------------------------------------------------------
-from typing import Callable
+from collections.abc import Callable
 
 DFLT_SOURCE = 0
 

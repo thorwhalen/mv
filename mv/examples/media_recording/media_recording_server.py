@@ -41,11 +41,11 @@ from typing import Optional, Tuple
 def get_path(
     save_rootdir: str,
     space: str,
-    start_ts: Optional[str],
-    end_ts: Optional[str],
-    session: Optional[str],
+    start_ts: str | None,
+    end_ts: str | None,
+    session: str | None,
     resolve_upload_inputs: callable,
-) -> Tuple[str, str]:
+) -> tuple[str, str]:
     """
     Compute the full path to save the file.
 

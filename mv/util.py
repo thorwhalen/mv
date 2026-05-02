@@ -1,6 +1,7 @@
 """Utility functions for the mv package."""
 
-from typing import Literal, Iterable
+from typing import Literal
+from collections.abc import Iterable
 from functools import partial
 import cv2
 from config2py import (
