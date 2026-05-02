@@ -125,7 +125,9 @@ coverage_report_format = [
     "xml",
 ]
 exclude_paths = [
-    "examples",
+    "mv/examples",
+    "mv/experiments",
+    "mv/wip",
     "scrap",
 ]
 test_on_windows = true
