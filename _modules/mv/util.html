@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mv.util &mdash; mv 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            mv
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/mv.html">mv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/mv/util.html">mv.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/mv/wip.html">mv.wip</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/mv/wip/live_qr_codes.html">mv.wip.live_qr_codes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/mv/wip/video_transforms.html">mv.wip.video_transforms</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">mv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mv.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mv.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for the mv package.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config2py</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_app_config_folder</span><span class="p">,</span>
+    <span class="n">process_path</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+
+<span class="n">pkg_name</span> <span class="o">=</span> <span class="s1">&#39;mv&#39;</span>
+<span class="n">app_dir</span> <span class="o">=</span> <span class="n">get_app_config_folder</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">app_filepath</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">process_path</span><span class="p">,</span> <span class="n">ensure_dir_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rootdir</span><span class="o">=</span><span class="n">app_dir</span><span class="p">)</span>
+
+
+<span class="c1"># Note: Got this list by asking AI to give me the twenty most important properties,</span>
+<span class="c1"># with a short description of each, from the list I provided it by running the following code:</span>
+<span class="c1"># list(filter(lambda x: x.startswith(&#39;CAP_PROP_&#39;), dir(cv2)))</span>
+<span class="n">camera_properties</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;frame_width&quot;</span><span class="p">:</span> <span class="s2">&quot;Width of the frames in the video stream.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;frame_height&quot;</span><span class="p">:</span> <span class="s2">&quot;Height of the frames in the video stream.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;fps&quot;</span><span class="p">:</span> <span class="s2">&quot;Frame rate of the video capture.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;brightness&quot;</span><span class="p">:</span> <span class="s2">&quot;Brightness of the image (only for cameras).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;contrast&quot;</span><span class="p">:</span> <span class="s2">&quot;Contrast of the image (only for cameras).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;saturation&quot;</span><span class="p">:</span> <span class="s2">&quot;Saturation of the image (only for cameras).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hue&quot;</span><span class="p">:</span> <span class="s2">&quot;Hue of the image (only for cameras).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gain&quot;</span><span class="p">:</span> <span class="s2">&quot;Gain of the image (only for cameras).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exposure&quot;</span><span class="p">:</span> <span class="s2">&quot;Exposure time of the camera (only for cameras).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;focus&quot;</span><span class="p">:</span> <span class="s2">&quot;Focus setting of the camera (only for cameras).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auto_exposure&quot;</span><span class="p">:</span> <span class="s2">&quot;Auto exposure setting (0=auto, 1=manual).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auto_wb&quot;</span><span class="p">:</span> <span class="s2">&quot;Enable/disable auto white balance.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;wb_temperature&quot;</span><span class="p">:</span> <span class="s2">&quot;White balance temperature (if auto white balance is off).&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;zoom&quot;</span><span class="p">:</span> <span class="s2">&quot;Camera zoom level.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pan&quot;</span><span class="p">:</span> <span class="s2">&quot;Pan (horizontal movement) of the camera.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tilt&quot;</span><span class="p">:</span> <span class="s2">&quot;Tilt (vertical movement) of the camera.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;roll&quot;</span><span class="p">:</span> <span class="s2">&quot;Roll angle of the camera.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sharpness&quot;</span><span class="p">:</span> <span class="s2">&quot;Sharpness of the image.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="s2">&quot;Gamma correction value.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="s2">&quot;Current backend used for video capture.&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">CameraProperty</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
+    <span class="s2">&quot;frame_width&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;frame_height&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;fps&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;brightness&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;contrast&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;saturation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hue&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gain&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exposure&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;focus&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auto_exposure&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auto_wb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;wb_temperature&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;zoom&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pan&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tilt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;roll&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sharpness&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gamma&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;backend&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">DFLT_CAMERA_PROPERTIES</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;frame_width&#39;</span><span class="p">,</span> <span class="s1">&#39;frame_height&#39;</span><span class="p">,</span> <span class="s1">&#39;fps&#39;</span><span class="p">,</span> <span class="s1">&#39;zoom&#39;</span><span class="p">,</span> <span class="s1">&#39;backend&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="scan_for_openable_video_indices">
+<a class="viewcode-back" href="../../module_docs/mv/util.html#mv.util.scan_for_openable_video_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scan_for_openable_video_indices</span><span class="p">(</span>
+    <span class="n">properties</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">CameraProperty</span><span class="p">]</span> <span class="o">=</span> <span class="n">DFLT_CAMERA_PROPERTIES</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">max_indices</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Scans for video capture devices by trying indices 0 to max_indices-1.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        max_indices (int): The maximum number of indices to test.</span>
+<span class="sd">        verbose (bool): If True, print status messages.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[dict]: A list of dictionaries, each containing information</span>
+<span class="sd">                    about an openable video source.</span>
+<span class="sd">                    For example:</span>
+<span class="sd">                      {&#39;index&#39;: 0,</span>
+<span class="sd">                       &#39;frame_width&#39;: 640.0,</span>
+<span class="sd">                       &#39;frame_height&#39;: 480.0,</span>
+<span class="sd">                       &#39;fps&#39;: 30.0}</span>
+<span class="sd">                    If no additional information is available,</span>
+<span class="sd">                    the dict will contain the index and any properties that could be queried.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">video_sources</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_indices</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Testing video source index: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cap</span><span class="o">.</span><span class="n">isOpened</span><span class="p">():</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+                <span class="n">prop_cv2_name</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;CAP_PROP_</span><span class="si">{</span><span class="n">prop</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">prop_cv2_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">info</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+            <span class="k">yield</span> <span class="n">info</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> is open: </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">video_sources</span></div>
+
+
+
+<div class="viewcode-block" id="record_video_from_camera">
+<a class="viewcode-back" href="../../module_docs/mv/util.html#mv.util.record_video_from_camera">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">record_video_from_camera</span><span class="p">(</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">fourcc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mp4v&quot;</span><span class="p">,</span>
+    <span class="n">fps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
+    <span class="n">frame_size</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">show_window</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">window_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Recording (ESC or Ctrl+C to stop)&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Record video from the camera and save to a file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename: Output video file path. If None, auto-generates a timestamped filename.</span>
+<span class="sd">        source: Camera index (default 0).</span>
+<span class="sd">        fourcc: FourCC code for video encoding (default &#39;mp4v&#39; for .mp4).</span>
+<span class="sd">        fps: Frames per second.</span>
+<span class="sd">        frame_size: (width, height). If None, uses camera&#39;s default.</span>
+<span class="sd">        show_window: Whether to display a live preview window.</span>
+<span class="sd">        window_name: Name of the preview window.</span>
+
+<span class="sd">    Stops recording on KeyboardInterrupt, ESC key, or error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+
+    <span class="c1"># Auto-generate filename if not provided</span>
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;video-</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2">.mp4&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cap</span><span class="o">.</span><span class="n">isOpened</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot open camera (index </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get frame size if not provided</span>
+    <span class="k">if</span> <span class="n">frame_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_WIDTH</span><span class="p">))</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_HEIGHT</span><span class="p">))</span>
+        <span class="n">frame_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+
+    <span class="c1"># Define the codec and create VideoWriter object</span>
+    <span class="n">fourcc_code</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter_fourcc</span><span class="p">(</span><span class="o">*</span><span class="n">fourcc</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fourcc_code</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">frame_size</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Recording started. Saving to: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Press ESC in the window or Ctrl+C in the terminal to stop.&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to grab frame. Exiting.&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_window</span><span class="p">:</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">window_name</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="mi">27</span><span class="p">:</span>  <span class="c1"># ESC key</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ESC pressed. Exiting.&quot;</span><span class="p">)</span>
+                    <span class="k">break</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;KeyboardInterrupt received. Exiting.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">show_window</span><span class="p">:</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Recording stopped. Video saved to: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

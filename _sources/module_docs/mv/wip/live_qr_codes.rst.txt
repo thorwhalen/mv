@@ -1,0 +1,4 @@
+mv.wip.live_qr_codes
+====================
+.. automodule:: mv.wip.live_qr_codes
+   :members:

@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mv.wip.live_qr_codes &mdash; mv 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="mv.wip.video_transforms" href="video_transforms.html" />
+    <link rel="prev" title="mv.wip" href="../wip.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            mv
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../mv.html">mv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../util.html">mv.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wip.html">mv.wip</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">mv.wip.live_qr_codes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mv.wip.live_qr_codes.OverlayManager"><code class="docutils literal notranslate"><span class="pre">OverlayManager</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mv.wip.live_qr_codes.OverlayManager.render"><code class="docutils literal notranslate"><span class="pre">OverlayManager.render()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mv.wip.live_qr_codes.OverlayManager.update"><code class="docutils literal notranslate"><span class="pre">OverlayManager.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mv.wip.live_qr_codes.compute_display_data_example3"><code class="docutils literal notranslate"><span class="pre">compute_display_data_example3()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mv.wip.live_qr_codes.compute_display_data_example4"><code class="docutils literal notranslate"><span class="pre">compute_display_data_example4()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mv.wip.live_qr_codes.create_qr_code"><code class="docutils literal notranslate"><span class="pre">create_qr_code()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mv.wip.live_qr_codes.default_displayer"><code class="docutils literal notranslate"><span class="pre">default_displayer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mv.wip.live_qr_codes.dotpath_to_pyobj"><code class="docutils literal notranslate"><span class="pre">dotpath_to_pyobj()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mv.wip.live_qr_codes.grid_image"><code class="docutils literal notranslate"><span class="pre">grid_image()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="video_transforms.html">mv.wip.video_transforms</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">mv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">mv.wip.live_qr_codes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/module_docs/mv/wip/live_qr_codes.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mv.wip.live_qr_codes">
+<span id="mv-wip-live-qr-codes"></span><h1>mv.wip.live_qr_codes<a class="headerlink" href="#module-mv.wip.live_qr_codes" title="Link to this heading"></a></h1>
+<p>Live QR code detection and decoding</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.OverlayManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">OverlayManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">overlay_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#OverlayManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.OverlayManager" title="Link to this definition"></a></dt>
+<dd><p>Manages persistent overlays on video frames.</p>
+<p>Each overlay (polygon or text) is stored along with a timestamp.
+When rendering, only overlays added within the last <cite>overlay_duration</cite>
+seconds are drawn.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.OverlayManager.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#OverlayManager.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.OverlayManager.render" title="Link to this definition"></a></dt>
+<dd><p>Renders all overlays that are still fresh onto the frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.OverlayManager.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_overlays</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#OverlayManager.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.OverlayManager.update" title="Link to this definition"></a></dt>
+<dd><p>Adds new overlay items from the provided dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.compute_display_data_example3">
+<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">compute_display_data_example3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detection_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#compute_display_data_example3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.compute_display_data_example3" title="Link to this definition"></a></dt>
+<dd><p>Example 3: Always display the mean HCL values computed from the entire frame.
+The values are rendered as a table in the top‐left corner, with fixed-width formatting.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.compute_display_data_example4">
+<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">compute_display_data_example4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detection_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#compute_display_data_example4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.compute_display_data_example4" title="Link to this definition"></a></dt>
+<dd><p>Example 4: Display the mean HCL values (computed from the QR code region)
+and the decoded QR text in a table. The overlay is only updated if a QR code
+is detected (or was recently detected).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.create_qr_code">
+<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">create_qr_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">back_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">border</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra_qrcode_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#create_qr_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.create_qr_code" title="Link to this definition"></a></dt>
+<dd><p>Generate a QR code image for a given string with customizable colors and dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>str</em>) – The string to encode into the QR code.</p></li>
+<li><p><strong>fill_color</strong> (<em>str</em><em>, </em><em>optional</em>) – Color of the QR code modules. Defaults to ‘black’.</p></li>
+<li><p><strong>back_color</strong> (<em>str</em><em>, </em><em>optional</em>) – Color of the background. Defaults to ‘white’.</p></li>
+<li><p><strong>box_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of each box in pixels. Defaults to 10.</p></li>
+<li><p><strong>border</strong> (<em>int</em><em>, </em><em>optional</em>) – Width of the border (in boxes). Defaults to 4.</p></li>
+<li><p><strong>**extra_qrcode_kwargs</strong> – Additional keyword arguments for the qrcode.QRCode constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated QR code image.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PIL.Image.Image</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qr_img</span> <span class="o">=</span> <span class="n">create_qr_code</span><span class="p">(</span><span class="s2">&quot;https://www.example.com&quot;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qr_img</span><span class="o">.</span><span class="n">size</span>  
+<span class="go">(410, 410)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.default_displayer">
+<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">default_displayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#default_displayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.default_displayer" title="Link to this definition"></a></dt>
+<dd><p>Updates the persistent overlays and then displays the frame.</p>
+<p>This function updates the global OverlayManager with any new overlays
+provided in display_data, renders all persistent overlays on the frame,
+and then shows the result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.dotpath_to_pyobj">
+<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">dotpath_to_pyobj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dotpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#dotpath_to_pyobj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.dotpath_to_pyobj" title="Link to this definition"></a></dt>
+<dd><p>Convert a dotpath (e.g., “a.b.c”) to a Python object (e.g., a.b.c).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dotpath</strong> (<em>str</em>) – The dotpath string to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Python object corresponding to the dotpath.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the dotpath is empty or invalid.</p></li>
+<li><p><strong>ImportError</strong> – If the module cannot be imported.</p></li>
+<li><p><strong>AttributeError</strong> – If the attribute cannot be found in the module.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mv.wip.live_qr_codes.grid_image">
+<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">grid_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_to_rgb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#grid_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.grid_image" title="Link to this definition"></a></dt>
+<dd><p>Create a grid of images from a list of images.</p>
+<p>Note: Requires PIL</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>imgs</strong> (<em>list</em><em> of </em><em>PIL.Image.Image</em>) – List of images to arrange in a grid.</p></li>
+<li><p><strong>n_rows</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of rows in the grid. If None, computed from n_cols and len(imgs).</p></li>
+<li><p><strong>n_cols</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of columns in the grid. Default is 1. If None, computed from n_rows and len(imgs).</p></li>
+<li><p><strong>v_padding</strong> (<em>int</em>) – Vertical padding between images in pixels. Default is 0.</p></li>
+<li><p><strong>h_padding</strong> (<em>int</em>) – Horizontal padding between images in pixels. Default is 0.</p></li>
+<li><p><strong>convert_to_rgb</strong> (<em>bool</em>) – If True, convert images to RGB mode. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new image with all input images arranged in a grid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PIL.Image.Image</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <cite>imgs</cite> is empty or both <cite>n_rows</cite> and <cite>n_cols</cite> are None.</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img1</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img2</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img3</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img4</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">img1</span><span class="p">,</span> <span class="n">img2</span><span class="p">,</span> <span class="n">img3</span><span class="p">,</span> <span class="n">img4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid_image</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">v_padding</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">h_padding</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># Check the size of the resulting grid image</span>
+<span class="go">(220, 220)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../wip.html" class="btn btn-neutral float-left" title="mv.wip" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="video_transforms.html" class="btn btn-neutral float-right" title="mv.wip.video_transforms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

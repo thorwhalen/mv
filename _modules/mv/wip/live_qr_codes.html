@@ -1,0 +1,670 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mv.wip.live_qr_codes &mdash; mv 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            mv
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/mv.html">mv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/mv/util.html">mv.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/mv/wip.html">mv.wip</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/mv/wip/live_qr_codes.html">mv.wip.live_qr_codes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/mv/wip/video_transforms.html">mv.wip.video_transforms</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">mv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mv.wip.live_qr_codes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mv.wip.live_qr_codes</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Live QR code detection and decoding&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="dotpath_to_pyobj">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.dotpath_to_pyobj">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dotpath_to_pyobj</span><span class="p">(</span><span class="n">dotpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a dotpath (e.g., &quot;a.b.c&quot;) to a Python object (e.g., a.b.c).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dotpath (str): The dotpath string to convert.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        object: The Python object corresponding to the dotpath.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the dotpath is empty or invalid.</span>
+<span class="sd">        ImportError: If the module cannot be imported.</span>
+<span class="sd">        AttributeError: If the attribute cannot be found in the module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dotpath</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dotpath</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dotpath must be a non-empty string&quot;</span><span class="p">)</span>
+
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">dotpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">parts</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dotpath: </span><span class="si">{</span><span class="n">dotpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Handle module import</span>
+    <span class="n">module_name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not import module: </span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Handle remainder of the path</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">module</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; object has no attribute &#39;</span><span class="si">{</span><span class="n">part</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<div class="viewcode-block" id="create_qr_code">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.create_qr_code">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_qr_code</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">fill_color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
+    <span class="n">back_color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span>
+    <span class="n">box_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">border</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">extra_qrcode_kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a QR code image for a given string with customizable colors and dimensions.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data (str): The string to encode into the QR code.</span>
+<span class="sd">        fill_color (str, optional): Color of the QR code modules. Defaults to &#39;black&#39;.</span>
+<span class="sd">        back_color (str, optional): Color of the background. Defaults to &#39;white&#39;.</span>
+<span class="sd">        box_size (int, optional): Size of each box in pixels. Defaults to 10.</span>
+<span class="sd">        border (int, optional): Width of the border (in boxes). Defaults to 4.</span>
+<span class="sd">        **extra_qrcode_kwargs: Additional keyword arguments for the qrcode.QRCode constructor.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PIL.Image.Image: The generated QR code image.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; qr_img = create_qr_code(&quot;https://www.example.com&quot;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; qr_img.size  # doctest: +SKIP</span>
+<span class="sd">    (410, 410)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">qrcode</span>  <span class="c1"># pip install qrcode[pil]</span>
+
+    <span class="n">qr</span> <span class="o">=</span> <span class="n">qrcode</span><span class="o">.</span><span class="n">QRCode</span><span class="p">(</span><span class="n">box_size</span><span class="o">=</span><span class="n">box_size</span><span class="p">,</span> <span class="n">border</span><span class="o">=</span><span class="n">border</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_qrcode_kwargs</span><span class="p">)</span>
+    <span class="n">qr</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">qr</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">fit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">qr</span><span class="o">.</span><span class="n">make_image</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="n">fill_color</span><span class="p">,</span> <span class="n">back_color</span><span class="o">=</span><span class="n">back_color</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="grid_image">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.grid_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">grid_image</span><span class="p">(</span>
+    <span class="n">imgs</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">v_padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">h_padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">convert_to_rgb</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a grid of images from a list of images.</span>
+
+<span class="sd">    Note: Requires PIL</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        imgs (list of PIL.Image.Image): List of images to arrange in a grid.</span>
+<span class="sd">        n_rows (int, optional): Number of rows in the grid. If None, computed from n_cols and len(imgs).</span>
+<span class="sd">        n_cols (int, optional): Number of columns in the grid. Default is 1. If None, computed from n_rows and len(imgs).</span>
+<span class="sd">        v_padding (int): Vertical padding between images in pixels. Default is 0.</span>
+<span class="sd">        h_padding (int): Horizontal padding between images in pixels. Default is 0.</span>
+<span class="sd">        convert_to_rgb (bool): If True, convert images to RGB mode. Default is True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PIL.Image.Image: A new image with all input images arranged in a grid.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If `imgs` is empty or both `n_rows` and `n_cols` are None.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; from PIL import Image</span>
+<span class="sd">    &gt;&gt;&gt; img1 = Image.new(&#39;RGB&#39;, (100, 100), color=&#39;red&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; img2 = Image.new(&#39;RGB&#39;, (100, 100), color=&#39;blue&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; img3 = Image.new(&#39;RGB&#39;, (100, 100), color=&#39;green&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; img4 = Image.new(&#39;RGB&#39;, (100, 100), color=&#39;yellow&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; imgs = [img1, img2, img3, img4]</span>
+<span class="sd">    &gt;&gt;&gt; grid = grid_image(imgs, n_rows=2, n_cols=2, v_padding=10, h_padding=10)</span>
+<span class="sd">    &gt;&gt;&gt; grid.size  # Check the size of the resulting grid image</span>
+<span class="sd">    (220, 220)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>  <span class="c1"># pip install pillow</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">imgs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The img list is empty.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Determine grid dimensions</span>
+    <span class="n">num_imgs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_rows</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one of n_rows or n_cols must be specified.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_rows</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">num_imgs</span> <span class="o">//</span> <span class="n">n_cols</span><span class="p">)</span>  <span class="c1"># Ceiling division</span>
+    <span class="k">elif</span> <span class="n">n_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_cols</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">num_imgs</span> <span class="o">//</span> <span class="n">n_rows</span><span class="p">)</span>  <span class="c1"># Ceiling division</span>
+
+    <span class="k">if</span> <span class="n">convert_to_rgb</span><span class="p">:</span>
+        <span class="c1"># Convert images to RGB to avoid issues with differing modes</span>
+        <span class="n">imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">imgs</span><span class="p">]</span>
+
+    <span class="c1"># Get individual image dimensions (assumes all images are the same size)</span>
+    <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="c1"># Calculate the size of the grid image</span>
+    <span class="n">grid_width</span> <span class="o">=</span> <span class="n">n_cols</span> <span class="o">*</span> <span class="n">img_width</span> <span class="o">+</span> <span class="p">(</span><span class="n">n_cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_padding</span>
+    <span class="n">grid_height</span> <span class="o">=</span> <span class="n">n_rows</span> <span class="o">*</span> <span class="n">img_height</span> <span class="o">+</span> <span class="p">(</span><span class="n">n_rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">v_padding</span>
+
+    <span class="c1"># Create a blank image to hold the grid</span>
+    <span class="n">grid_img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">grid_width</span><span class="p">,</span> <span class="n">grid_height</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>
+
+    <span class="c1"># Paste images onto the grid</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">imgs</span><span class="p">):</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">col</span> <span class="o">*</span> <span class="p">(</span><span class="n">img_width</span> <span class="o">+</span> <span class="n">h_padding</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">row</span> <span class="o">*</span> <span class="p">(</span><span class="n">img_height</span> <span class="o">+</span> <span class="n">v_padding</span><span class="p">)</span>
+        <span class="n">grid_img</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">grid_img</span></div>
+
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="c1"># Overlay Manager (persistent overlays for a set duration)</span>
+<span class="c1"># ----------------------------------------------------------------</span>
+<div class="viewcode-block" id="OverlayManager">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.OverlayManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OverlayManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages persistent overlays on video frames.</span>
+
+<span class="sd">    Each overlay (polygon or text) is stored along with a timestamp.</span>
+<span class="sd">    When rendering, only overlays added within the last `overlay_duration`</span>
+<span class="sd">    seconds are drawn.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overlay_duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overlay_duration</span> <span class="o">=</span> <span class="n">overlay_duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;polygons&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;texts&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+<div class="viewcode-block" id="OverlayManager.update">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.OverlayManager.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_overlays</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds new overlay items from the provided dictionary.&quot;&quot;&quot;</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;polygons&#39;</span> <span class="ow">in</span> <span class="n">new_overlays</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">new_overlays</span><span class="p">[</span><span class="s1">&#39;polygons&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s1">&#39;polygons&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">poly</span><span class="p">,</span> <span class="n">now</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s1">&#39;texts&#39;</span> <span class="ow">in</span> <span class="n">new_overlays</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">text_item</span> <span class="ow">in</span> <span class="n">new_overlays</span><span class="p">[</span><span class="s1">&#39;texts&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s1">&#39;texts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">text_item</span><span class="p">,</span> <span class="n">now</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="OverlayManager.render">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.OverlayManager.render">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renders all overlays that are still fresh onto the frame.&quot;&quot;&quot;</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">keep</span><span class="p">(</span><span class="n">overlay</span><span class="p">):</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">overlay</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="n">timestamp</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlay_duration</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s1">&#39;polygons&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">keep</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s1">&#39;polygons&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s1">&#39;texts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">keep</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s1">&#39;texts&#39;</span><span class="p">]))</span>
+
+        <span class="k">for</span> <span class="n">poly</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s1">&#39;polygons&#39;</span><span class="p">]:</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">[</span><span class="n">poly</span><span class="p">],</span> <span class="n">isClosed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">text_item</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s1">&#39;texts&#39;</span><span class="p">]:</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span>
+                <span class="n">text_item</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">],</span>
+                <span class="n">text_item</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">],</span>
+                <span class="n">text_item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">),</span>
+                <span class="n">text_item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scale&#39;</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span>
+                <span class="n">text_item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                <span class="n">text_item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;thickness&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">frame</span></div>
+</div>
+
+
+
+<span class="c1"># Global overlay manager instance.</span>
+<span class="n">overlay_manager</span> <span class="o">=</span> <span class="n">OverlayManager</span><span class="p">(</span><span class="n">overlay_duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="default_displayer">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.default_displayer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_displayer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">display_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates the persistent overlays and then displays the frame.</span>
+
+<span class="sd">    This function updates the global OverlayManager with any new overlays</span>
+<span class="sd">    provided in display_data, renders all persistent overlays on the frame,</span>
+<span class="sd">    and then shows the result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">display_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">display_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">overlay_manager</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">display_data</span><span class="p">)</span>
+    <span class="n">window_name</span> <span class="o">=</span> <span class="n">display_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;window_name&#39;</span><span class="p">,</span> <span class="s2">&quot;Video&quot;</span><span class="p">)</span>
+    <span class="n">overlay_manager</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">window_name</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="c1"># Video capture context manager and pipeline</span>
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">video_capture</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">cap</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_video_pipeline</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">compute_display_data</span><span class="p">,</span> <span class="n">displayer</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">video_capture</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">as</span> <span class="n">cap</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">detection_result</span> <span class="o">=</span> <span class="n">detector</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+            <span class="n">display_data</span> <span class="o">=</span> <span class="n">compute_display_data</span><span class="p">(</span><span class="n">detection_result</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+            <span class="n">displayer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">display_data</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span>
+                <span class="k">break</span>
+
+
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="c1"># QR Code detector factory</span>
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_qr_detector</span><span class="p">():</span>
+    <span class="n">qr_detector_obj</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">QRCodeDetector</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">detector</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">qr_detector_obj</span><span class="o">.</span><span class="n">detectAndDecode</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">points</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s1">&#39;points&#39;</span><span class="p">:</span> <span class="n">points</span><span class="p">}</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">detector</span>
+
+
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="c1"># Example 1: Display only the QR code rectangle and the text it encodes.</span>
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_display_data_example1</span><span class="p">(</span><span class="n">detection_result</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    <span class="n">display_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">detection_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">detection_result</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">poly</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">display_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;polygons&#39;</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
+
+        <span class="c1"># Display the encoded text near the bounding box.</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">boundingRect</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+        <span class="n">text_position</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="n">display_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;texts&#39;</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">detection_result</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="n">text_position</span><span class="p">,</span>
+                <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+                <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+                <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="n">display_data</span><span class="p">[</span><span class="s1">&#39;window_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;QR Code Display&quot;</span>
+    <span class="k">return</span> <span class="n">display_data</span>
+
+
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="c1"># Example 2: Constantly display the computed mean HCL values at a fixed location.</span>
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_display_data_example2</span><span class="p">(</span><span class="n">detection_result</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    <span class="n">display_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">detection_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">detection_result</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">boundingRect</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+        <span class="n">roi</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">y</span> <span class="p">:</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">x</span> <span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">roi</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lab_roi</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2LAB</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="c1"># Convert L from [0, 255] to [0, 100]</span>
+            <span class="n">L_channel</span> <span class="o">=</span> <span class="n">lab_roi</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span>
+            <span class="c1"># a and b channels are offset by 128 in OpenCV&#39;s LAB</span>
+            <span class="n">a_channel</span> <span class="o">=</span> <span class="n">lab_roi</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">128.0</span>
+            <span class="n">b_channel</span> <span class="o">=</span> <span class="n">lab_roi</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">128.0</span>
+            <span class="n">hue</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">b_channel</span><span class="p">,</span> <span class="n">a_channel</span><span class="p">))</span> <span class="o">+</span> <span class="mi">360</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span>
+            <span class="n">chroma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a_channel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b_channel</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">mean_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">L_channel</span><span class="p">)</span>
+            <span class="n">mean_H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">hue</span><span class="p">)</span>
+            <span class="n">mean_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">chroma</span><span class="p">)</span>
+            <span class="c1"># Use a fixed-width format to ease visual tracking</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;H: </span><span class="si">{</span><span class="n">mean_H</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">  C: </span><span class="si">{</span><span class="n">mean_C</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">  L: </span><span class="si">{</span><span class="n">mean_L</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="c1"># Fixed display location (e.g., top-left corner)</span>
+            <span class="n">text_position</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+            <span class="n">display_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;texts&#39;</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+                    <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="n">text_position</span><span class="p">,</span>
+                    <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+                    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+                    <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+    <span class="n">display_data</span><span class="p">[</span><span class="s1">&#39;window_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Color Values Display&quot;</span>
+    <span class="k">return</span> <span class="n">display_data</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="compute_display_data_example3">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.compute_display_data_example3">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_display_data_example3</span><span class="p">(</span><span class="n">detection_result</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example 3: Always display the mean HCL values computed from the entire frame.</span>
+<span class="sd">    The values are rendered as a table in the top‐left corner, with fixed-width formatting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert the entire frame from BGR to LAB.</span>
+    <span class="n">lab_frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2LAB</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="c1"># Scale L from [0,255] to [0,100].</span>
+    <span class="n">L_channel</span> <span class="o">=</span> <span class="n">lab_frame</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span>
+    <span class="c1"># a and b channels are offset by 128 in OpenCV&#39;s LAB.</span>
+    <span class="n">a_channel</span> <span class="o">=</span> <span class="n">lab_frame</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">128.0</span>
+    <span class="n">b_channel</span> <span class="o">=</span> <span class="n">lab_frame</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">128.0</span>
+
+    <span class="c1"># Compute hue in degrees and chroma.</span>
+    <span class="n">hue</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">b_channel</span><span class="p">,</span> <span class="n">a_channel</span><span class="p">))</span> <span class="o">+</span> <span class="mi">360</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span>
+    <span class="n">chroma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a_channel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b_channel</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Compute mean values.</span>
+    <span class="n">mean_H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">hue</span><span class="p">)</span>
+    <span class="n">mean_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">chroma</span><span class="p">)</span>
+    <span class="n">mean_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">L_channel</span><span class="p">)</span>
+
+    <span class="c1"># Prepare text overlays in a table-like format.</span>
+    <span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Fixed positions for each row (adjust Y positions as needed).</span>
+    <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;H: </span><span class="si">{</span><span class="n">mean_H</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+            <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+            <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;C: </span><span class="si">{</span><span class="n">mean_C</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+            <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+            <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;L: </span><span class="si">{</span><span class="n">mean_L</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span>
+            <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+            <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;texts&#39;</span><span class="p">:</span> <span class="n">texts</span><span class="p">,</span> <span class="s1">&#39;window_name&#39;</span><span class="p">:</span> <span class="s2">&quot;HCL Table Display&quot;</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="compute_display_data_example4">
+<a class="viewcode-back" href="../../../module_docs/mv/wip/live_qr_codes.html#mv.wip.live_qr_codes.compute_display_data_example4">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_display_data_example4</span><span class="p">(</span><span class="n">detection_result</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example 4: Display the mean HCL values (computed from the QR code region)</span>
+<span class="sd">    and the decoded QR text in a table. The overlay is only updated if a QR code</span>
+<span class="sd">    is detected (or was recently detected).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">display_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">detection_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use the bounding rectangle from the detected QR code.</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">detection_result</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">boundingRect</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+        <span class="n">roi</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">y</span> <span class="p">:</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">x</span> <span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">roi</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lab_roi</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2LAB</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="n">L_channel</span> <span class="o">=</span> <span class="n">lab_roi</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span>
+            <span class="n">a_channel</span> <span class="o">=</span> <span class="n">lab_roi</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">128.0</span>
+            <span class="n">b_channel</span> <span class="o">=</span> <span class="n">lab_roi</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">128.0</span>
+
+            <span class="n">hue</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">b_channel</span><span class="p">,</span> <span class="n">a_channel</span><span class="p">))</span> <span class="o">+</span> <span class="mi">360</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span>
+            <span class="n">chroma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a_channel</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b_channel</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">mean_H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">hue</span><span class="p">)</span>
+            <span class="n">mean_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">chroma</span><span class="p">)</span>
+            <span class="n">mean_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">L_channel</span><span class="p">)</span>
+
+            <span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># Display each value in a fixed row (e.g., rows 1-3) with fixed-width formatting.</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;H: </span><span class="si">{</span><span class="n">mean_H</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+                    <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+                    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;C: </span><span class="si">{</span><span class="n">mean_C</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+                    <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+                    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;L: </span><span class="si">{</span><span class="n">mean_L</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span>
+                    <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+                    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="c1"># Add a fourth row for the decoded QR text.</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;QR: </span><span class="si">{</span><span class="n">detection_result</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span>
+                    <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+                    <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+            <span class="n">display_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;texts&#39;</span><span class="p">:</span> <span class="n">texts</span><span class="p">,</span> <span class="s1">&#39;window_name&#39;</span><span class="p">:</span> <span class="s2">&quot;QR HCL Table Display&quot;</span><span class="p">}</span>
+    <span class="c1"># If no QR is detected, return an empty dict; this lets the overlay manager</span>
+    <span class="c1"># continue displaying previous overlays until they time out.</span>
+    <span class="k">return</span> <span class="n">display_data</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="c1"># Example launchers</span>
+<span class="c1"># ----------------------------------------------------------------</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="n">DFLT_SOURCE</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_example_with_qr_detector</span><span class="p">(</span>
+    <span class="n">display_data_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DFLT_SOURCE</span>
+<span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">display_data_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;display_data_func must be provided. Use a function, int or a string &quot;</span>
+            <span class="s2">&quot;representing the function name.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">display_data_func</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">display_data_func</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="nb">str</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">display_data_func</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">display_data_func</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;compute_display_data_example</span><span class="si">{</span><span class="n">display_data_func</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">display_data_func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">display_data_func</span><span class="p">:</span>
+            <span class="c1"># If the string is a dotpath, convert it to a Python object.</span>
+            <span class="n">display_data_func</span> <span class="o">=</span> <span class="n">dotpath_to_pyobj</span><span class="p">(</span><span class="n">display_data_func</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">global_vars</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span>
+            <span class="n">display_data_func</span> <span class="o">=</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">display_data_func</span><span class="p">)</span>
+
+    <span class="n">qr_detector</span> <span class="o">=</span> <span class="n">make_qr_detector</span><span class="p">()</span>
+    <span class="n">run_video_pipeline</span><span class="p">(</span><span class="n">qr_detector</span><span class="p">,</span> <span class="n">display_data_func</span><span class="p">,</span> <span class="n">default_displayer</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">argh</span>
+
+    <span class="n">argh</span><span class="o">.</span><span class="n">dispatch_command</span><span class="p">(</span>
+        <span class="n">run_example_with_qr_detector</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Uncomment one of the following to run the desired example.</span>
+    <span class="c1"># src_index = 1</span>
+    <span class="c1"># example_index = 4</span>
+
+    <span class="c1"># run_example_with_qr_detector(</span>
+    <span class="c1">#     f&quot;compute_display_data_example{example_index}&quot;, src_index</span>
+    <span class="c1"># )</span>
+    <span class="c1"># run_example1(src_index)</span>
+    <span class="c1"># run_example2(src_index)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
