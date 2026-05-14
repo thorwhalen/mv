@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mv.wip.live_qr_codes &mdash; mv 0.0.8 documentation</title>
+  <title>mv.wip.live_qr_codes &mdash; mv 0.0.9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -15,9 +15,9 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=53b53b71"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/documentation_options.js?v=f7cdbf68"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
@@ -98,7 +98,7 @@
 <p>Live QR code detection and decoding</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="mv.wip.live_qr_codes.OverlayManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">OverlayManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">overlay_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#OverlayManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.OverlayManager" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">OverlayManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">overlay_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#OverlayManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.OverlayManager" title="Link to this definition"></a></dt>
 <dd><p>Manages persistent overlays on video frames.</p>
 <p>Each overlay (polygon or text) is stored along with a timestamp.
 When rendering, only overlays added within the last <cite>overlay_duration</cite>
@@ -134,7 +134,7 @@ is detected (or was recently detected).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mv.wip.live_qr_codes.create_qr_code">
-<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">create_qr_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">back_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">border</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra_qrcode_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#create_qr_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.create_qr_code" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">create_qr_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">back_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">border</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra_qrcode_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#create_qr_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.create_qr_code" title="Link to this definition"></a></dt>
 <dd><p>Generate a QR code image for a given string with customizable colors and dimensions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -155,8 +155,8 @@ is detected (or was recently detected).</p>
 </dd>
 </dl>
 <p>Examples:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qr_img</span> <span class="o">=</span> <span class="n">create_qr_code</span><span class="p">(</span><span class="s2">&quot;https://www.example.com&quot;</span><span class="p">)</span>  
-<span class="gp">&gt;&gt;&gt; </span><span class="n">qr_img</span><span class="o">.</span><span class="n">size</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qr_img</span> <span class="o">=</span> <span class="n">create_qr_code</span><span class="p">(</span><span class="s2">&quot;https://www.example.com&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qr_img</span><span class="o">.</span><span class="n">size</span>
 <span class="go">(410, 410)</span>
 </pre></div>
 </div>
@@ -197,7 +197,7 @@ and then shows the result.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mv.wip.live_qr_codes.grid_image">
-<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">grid_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_to_rgb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#grid_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.grid_image" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">mv.wip.live_qr_codes.</span></span><span class="sig-name descname"><span class="pre">grid_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgs</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_to_rgb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mv/wip/live_qr_codes.html#grid_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mv.wip.live_qr_codes.grid_image" title="Link to this definition"></a></dt>
 <dd><p>Create a grid of images from a list of images.</p>
 <p>Note: Requires PIL</p>
 <dl class="field-list simple">
