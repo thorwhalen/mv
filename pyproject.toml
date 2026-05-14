@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mv"
-version = "0.0.9"
+version = "0.0.10"
 description = "Live video ML pipeline toolbox"
 readme = "README.md"
 requires-python = ">=3.10"
