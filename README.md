@@ -25,14 +25,16 @@ record_video_from_camera("my_recording.mp4")
 ## Reverse video
 
 ```py
-import mv.wip.video_transforms as vt 
+import mv.wip.video_transforms as vt
+
 reversed_video_path = vt.reverse_video_w_moviepy("input.mp4", "output.mp4")
 ```
 
 or, with only builtins (but you need `ffmpeg` installed on your system)
 
 ```py
-import mv.wip.video_transforms as vt 
+import mv.wip.video_transforms as vt
+
 reversed_video_path = vt.reverse_video_w_ffmpeg("input.mp4", "output.mp4")
 ```
 
