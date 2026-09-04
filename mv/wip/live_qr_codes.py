@@ -514,20 +514,3 @@ def run_example_with_qr_detector(
 
     qr_detector = make_qr_detector()
     run_video_pipeline(qr_detector, display_data_func, default_displayer, source)
-
-
-if __name__ == "__main__":
-    import argh
-
-    argh.dispatch_command(
-        run_example_with_qr_detector,
-    )
-    # Uncomment one of the following to run the desired example.
-    # src_index = 1
-    # example_index = 4
-
-    # run_example_with_qr_detector(
-    #     f"compute_display_data_example{example_index}", src_index
-    # )
-    # run_example1(src_index)
-    # run_example2(src_index)
